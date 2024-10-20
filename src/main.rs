@@ -4,9 +4,10 @@ use std::{
     io::{self, BufRead, BufReader},
 };
 mod day01;
+mod day02;
 
 type DayFn = fn(Vec<String>) -> (String, String);
-const DAYS: [DayFn; 1] = [day01::day01];
+const DAYS: [DayFn; 2] = [day01::day01, day02::day02];
 
 fn load_input(day: usize) -> Vec<String> {
     let path = format!("{}/{}.txt", "inputs", day);
