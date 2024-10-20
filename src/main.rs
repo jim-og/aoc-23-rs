@@ -3,11 +3,12 @@ use std::{
     fs::File,
     io::{self, BufRead, BufReader},
 };
+mod day00;
 mod day01;
 mod day02;
 
 type DayFn = fn(Vec<String>) -> (String, String);
-const DAYS: [DayFn; 2] = [day01::day01, day02::day02];
+const DAYS: [DayFn; 3] = [day00::day00, day01::day01, day02::day02];
 
 fn load_input(day: usize) -> Vec<String> {
     let path = format!("{}/{}.txt", "inputs", day);
@@ -29,6 +30,6 @@ fn main() {
         .expect("Day parameter not an integer");
 
     let input = load_input(day);
-    let (part1, part2) = DAYS[day - 1](input);
+    let (part1, part2) = DAYS[day](input);
     println!("Part 1: {}\nPart 2: {}", part1, part2);
 }
