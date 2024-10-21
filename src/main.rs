@@ -6,9 +6,10 @@ use std::{
 mod day00;
 mod day01;
 mod day02;
+mod day03;
 
 type DayFn = fn(Vec<String>) -> (String, String);
-const DAYS: [DayFn; 3] = [day00::day00, day01::day01, day02::day02];
+const DAYS: [DayFn; 4] = [day00::day00, day01::day01, day02::day02, day03::day03];
 
 fn load_input(day: usize) -> Vec<String> {
     let path = format!("{}/{}.txt", "inputs", day);
