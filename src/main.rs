@@ -7,9 +7,16 @@ mod day00;
 mod day01;
 mod day02;
 mod day03;
+mod day04;
 
 type DayFn = fn(Vec<String>) -> (String, String);
-const DAYS: [DayFn; 4] = [day00::day00, day01::day01, day02::day02, day03::day03];
+const DAYS: [DayFn; 5] = [
+    day00::day00,
+    day01::day01,
+    day02::day02,
+    day03::day03,
+    day04::day04,
+];
 
 fn load_input(day: usize) -> Vec<String> {
     let path = format!("{}/{}.txt", "inputs", day);
