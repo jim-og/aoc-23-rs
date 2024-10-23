@@ -65,11 +65,8 @@ pub fn day03(input: Vec<String>) -> (String, String) {
             let mut adjacent_parts = HashSet::new();
             for r in row - 1..row + 2 {
                 for c in col - 1..col + 2 {
-                    match schematic.get(&(r, c)) {
-                        Some(Point::Part(n)) => {
-                            adjacent_parts.insert(*n);
-                        }
-                        _ => (),
+                    if let Some(Point::Part(n)) = schematic.get(&(r, c)) {
+                        adjacent_parts.insert(*n);
                     }
                 }
             }

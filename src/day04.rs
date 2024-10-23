@@ -5,9 +5,9 @@ pub fn day04(input: Vec<String>) -> (String, String) {
 
     for (index, game) in input.iter().enumerate() {
         let segments = game.split([':', '|']).collect::<Vec<&str>>();
-        let winners = segments[1].trim().split_whitespace().collect::<Vec<&str>>();
+        let winners = segments[1].split_whitespace().collect::<Vec<&str>>();
         let picks: HashSet<&str> =
-            HashSet::from_iter(segments[2].trim().split_whitespace().collect::<Vec<&str>>());
+            HashSet::from_iter(segments[2].split_whitespace().collect::<Vec<&str>>());
 
         let mut matches: usize = 0;
         for winner in winners {
@@ -34,8 +34,8 @@ pub fn day04(input: Vec<String>) -> (String, String) {
     for result in results.clone() {
         stack.push(result.0);
     }
-    while !stack.is_empty() {
-        let game = stack.pop().expect("Stack unexpectedly empty");
+
+    while let Some(game) = stack.pop() {
         if let Some(matches) = results.get(&game) {
             for k in game + 1..game + matches + 1 {
                 if results.contains_key(&k) {

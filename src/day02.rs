@@ -20,7 +20,7 @@ pub fn day02(input: Vec<String>) -> (String, String) {
             for result in draw.split(',').collect::<Vec<&str>>() {
                 let number_colour = result.trim().split(' ').collect::<Vec<&str>>();
                 let number = number_colour
-                    .get(0)
+                    .first()
                     .expect("Failed to extract number of colour")
                     .parse::<usize>()
                     .expect("Failed to parse number of colour");

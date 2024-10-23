@@ -182,7 +182,7 @@ pub fn day05(input: Vec<String>) -> (String, String) {
 
     // Reinterpet the "seeds:" line as a range of seeds
     while let (Some(s), Some(r)) = (seed, range) {
-        seed_ranges.push(SeedRange::new(s.clone(), r.clone()));
+        seed_ranges.push(SeedRange::new(*s, *r));
         seed = iter.next();
         range = iter.next();
     }

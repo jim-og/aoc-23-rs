@@ -2,7 +2,7 @@
 pub fn day00(_input: Vec<String>) -> (String, String) {
     let answer_1 = "ANSWER_1".to_string();
     let answer_2 = "ANSWER_2".to_string();
-    (format!("{}", answer_1), format!("{}", answer_2))
+    (answer_1, answer_2)
 }
 
 #[cfg(test)]
