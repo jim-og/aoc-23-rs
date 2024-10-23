@@ -14,6 +14,6 @@ mod tests {
     fn example_both() {
         let result = day00(vec!["".to_string()]);
         assert_eq!(result.0, "ANSWER_1");
-        assert_eq!(result.0, "ANSWER_2");
+        assert_eq!(result.1, "ANSWER_2");
     }
 }

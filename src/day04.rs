@@ -38,9 +38,6 @@ pub fn day04(input: Vec<String>) -> (String, String) {
         let game = stack.pop().expect("Stack unexpectedly empty");
         if let Some(matches) = results.get(&game) {
             for k in game + 1..game + matches + 1 {
-                if k > input.len() {
-                    break;
-                }
                 if results.contains_key(&k) {
                     stack.push(k);
                     total += 1;

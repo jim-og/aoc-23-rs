@@ -9,7 +9,6 @@ enum State {
     LightToTemperature,
     TemperatureToHumidity,
     HumidityToLocation,
-    Done,
 }
 
 impl State {
@@ -25,9 +24,7 @@ impl State {
             Self::FertilizerToWater => Self::WaterToLight,
             Self::WaterToLight => Self::LightToTemperature,
             Self::LightToTemperature => Self::TemperatureToHumidity,
-            Self::TemperatureToHumidity => Self::HumidityToLocation,
-            Self::HumidityToLocation => Self::Done,
-            Self::Done => Self::Done,
+            _ => Self::HumidityToLocation,
         }
     }
 }
@@ -154,7 +151,6 @@ pub fn day05(input: Vec<String>) -> (String, String) {
             State::LightToTemperature => Some(&mut light_to_temperature),
             State::TemperatureToHumidity => Some(&mut temperature_to_humidity),
             State::HumidityToLocation => Some(&mut humidity_to_location),
-            _ => None,
         };
 
         // Fill the map
@@ -207,6 +203,7 @@ pub fn day05(input: Vec<String>) -> (String, String) {
         }
     }
 
+    // Shouldn't reach
     (format!("{}", part_1_min_location), format!("{}", u64::MAX))
 }
 
