@@ -47,21 +47,52 @@ impl Mapping {
         }
     }
 
-    pub fn conversion(&self, s: u64) -> Option<u64> {
+    pub fn source_to_destination(&self, s: u64) -> Option<u64> {
         if s >= self.source && s < self.source + self.range {
             return Some(self.destination + s - self.source);
         }
         None
     }
+
+    pub fn destination_to_source(&self, d: u64) -> Option<u64> {
+        if d >= self.destination && d < self.destination + self.range {
+            return Some(self.source + d - self.destination);
+        }
+        None
+    }
 }
 
-fn lookup(input: u64, mappings: &Vec<Mapping>) -> u64 {
+struct SeedRange {
+    start: u64,
+    range: u64,
+}
+
+impl SeedRange {
+    pub fn new(start: u64, range: u64) -> Self {
+        Self { start, range }
+    }
+
+    pub fn contains(&self, v: u64) -> bool {
+        v >= self.start && v < self.start + self.range
+    }
+}
+
+fn get_destination(source: u64, mappings: &Vec<Mapping>) -> u64 {
     for mapping in mappings {
-        if let Some(result) = mapping.conversion(input) {
-            return result;
+        if let Some(destination) = mapping.source_to_destination(source) {
+            return destination;
         }
     }
-    input
+    source
+}
+
+fn get_source(destination: u64, mappings: &Vec<Mapping>) -> u64 {
+    for mapping in mappings {
+        if let Some(source) = mapping.destination_to_source(destination) {
+            return source;
+        }
+    }
+    destination
 }
 
 pub fn day05(input: Vec<String>) -> (String, String) {
@@ -135,45 +166,48 @@ pub fn day05(input: Vec<String>) -> (String, String) {
     // Part 1
     let mut part_1_min_location = u64::MAX;
     for seed in seeds.clone() {
-        let soil = lookup(seed, &seed_to_soil);
-        let fertilizer = lookup(soil, &soil_to_fertilizer);
-        let water = lookup(fertilizer, &fertilizer_to_water);
-        let light = lookup(water, &water_to_light);
-        let temperature = lookup(light, &light_to_temperature);
-        let humidity = lookup(temperature, &temperature_to_humidity);
-        let location = lookup(humidity, &humidity_to_location);
+        let soil = get_destination(seed, &seed_to_soil);
+        let fertilizer = get_destination(soil, &soil_to_fertilizer);
+        let water = get_destination(fertilizer, &fertilizer_to_water);
+        let light = get_destination(water, &water_to_light);
+        let temperature = get_destination(light, &light_to_temperature);
+        let humidity = get_destination(temperature, &temperature_to_humidity);
+        let location = get_destination(humidity, &humidity_to_location);
         part_1_min_location = cmp::min(part_1_min_location, location);
     }
 
     // Part 2
-    // This method is super slow given the vast range of input seeds. The time to lookup each mapping is O(n).
-    // This could be improved to O(1) by storing each individual mapping as a key in a HashMap but this would
-    // require an enormous amount of space. Assuming the minimum location fits in u32, I suspect it would be
-    // quicker to perform this search in reverse, checking all possible locations from 0..u32::MAX until a
-    // matching seed is found.
-    let mut part_2_min_location = u64::MAX;
+    // Given the now vast range of input seeds it's much quicker to perform the search in reverse, checking locations
+    // from 0..u64::MAX until a matching seed is found.
+    let mut seed_ranges = Vec::new();
     let mut iter = seeds.iter();
     let mut seed = iter.next();
     let mut range = iter.next();
+
+    // Reinterpet the "seeds:" line as a range of seeds
     while let (Some(s), Some(r)) = (seed, range) {
-        for i in s.clone()..(s + r) {
-            let soil = lookup(i, &seed_to_soil);
-            let fertilizer = lookup(soil, &soil_to_fertilizer);
-            let water = lookup(fertilizer, &fertilizer_to_water);
-            let light = lookup(water, &water_to_light);
-            let temperature = lookup(light, &light_to_temperature);
-            let humidity = lookup(temperature, &temperature_to_humidity);
-            let location = lookup(humidity, &humidity_to_location);
-            part_2_min_location = cmp::min(part_2_min_location, location);
-        }
+        seed_ranges.push(SeedRange::new(s.clone(), r.clone()));
         seed = iter.next();
         range = iter.next();
     }
 
-    (
-        format!("{}", part_1_min_location),
-        format!("{}", part_2_min_location),
-    )
+    // Work backwards from location to find the first seed which lies within one of the ranges
+    for location in 0..u64::MAX {
+        let humidity = get_source(location, &humidity_to_location);
+        let temperature = get_source(humidity, &temperature_to_humidity);
+        let light = get_source(temperature, &light_to_temperature);
+        let water = get_source(light, &water_to_light);
+        let fertilizer = get_source(water, &fertilizer_to_water);
+        let soil = get_source(fertilizer, &soil_to_fertilizer);
+        let seed = get_source(soil, &seed_to_soil);
+        for seed_range in &seed_ranges {
+            if seed_range.contains(seed) {
+                return (format!("{}", part_1_min_location), format!("{}", location));
+            }
+        }
+    }
+
+    (format!("{}", part_1_min_location), format!("{}", u64::MAX))
 }
 
 #[cfg(test)]
@@ -181,28 +215,53 @@ mod tests {
     use super::*;
 
     #[test]
-    fn mapping_conversion() {
+    fn mapping_source_to_destination() {
         let mapping = Mapping::new(50, 98, 2);
-        assert!(mapping.conversion(97).is_none());
-        assert_eq!(mapping.conversion(98).unwrap(), 50);
-        assert_eq!(mapping.conversion(99).unwrap(), 51);
-        assert!(mapping.conversion(100).is_none());
+        assert!(mapping.source_to_destination(97).is_none());
+        assert_eq!(mapping.source_to_destination(98).unwrap(), 50);
+        assert_eq!(mapping.source_to_destination(99).unwrap(), 51);
+        assert!(mapping.source_to_destination(100).is_none());
     }
 
     #[test]
-    fn mapping_lookup() {
+    fn mapping_destination_to_source() {
+        let mapping = Mapping::new(50, 98, 2);
+        assert!(mapping.destination_to_source(49).is_none());
+        assert_eq!(mapping.destination_to_source(50).unwrap(), 98);
+        assert_eq!(mapping.destination_to_source(51).unwrap(), 99);
+        assert!(mapping.destination_to_source(52).is_none());
+    }
+
+    #[test]
+    fn mapping_get_destination() {
         let mappings = Vec::from([Mapping::new(50, 98, 2), Mapping::new(52, 50, 48)]);
-        assert_eq!(lookup(0, &mappings), 0);
-        assert_eq!(lookup(1, &mappings), 1);
-        assert_eq!(lookup(48, &mappings), 48);
-        assert_eq!(lookup(49, &mappings), 49);
-        assert_eq!(lookup(50, &mappings), 52);
-        assert_eq!(lookup(51, &mappings), 53);
-        assert_eq!(lookup(96, &mappings), 98);
-        assert_eq!(lookup(97, &mappings), 99);
-        assert_eq!(lookup(98, &mappings), 50);
-        assert_eq!(lookup(99, &mappings), 51);
-        assert_eq!(lookup(100, &mappings), 100);
+        assert_eq!(get_destination(0, &mappings), 0);
+        assert_eq!(get_destination(1, &mappings), 1);
+        assert_eq!(get_destination(48, &mappings), 48);
+        assert_eq!(get_destination(49, &mappings), 49);
+        assert_eq!(get_destination(50, &mappings), 52);
+        assert_eq!(get_destination(51, &mappings), 53);
+        assert_eq!(get_destination(96, &mappings), 98);
+        assert_eq!(get_destination(97, &mappings), 99);
+        assert_eq!(get_destination(98, &mappings), 50);
+        assert_eq!(get_destination(99, &mappings), 51);
+        assert_eq!(get_destination(100, &mappings), 100);
+    }
+
+    #[test]
+    fn mapping_get_source() {
+        let mappings = Vec::from([Mapping::new(50, 98, 2), Mapping::new(52, 50, 48)]);
+        assert_eq!(get_source(0, &mappings), 0);
+        assert_eq!(get_source(1, &mappings), 1);
+        assert_eq!(get_source(48, &mappings), 48);
+        assert_eq!(get_source(49, &mappings), 49);
+        assert_eq!(get_source(52, &mappings), 50);
+        assert_eq!(get_source(53, &mappings), 51);
+        assert_eq!(get_source(98, &mappings), 96);
+        assert_eq!(get_source(99, &mappings), 97);
+        assert_eq!(get_source(50, &mappings), 98);
+        assert_eq!(get_source(51, &mappings), 99);
+        assert_eq!(get_source(100, &mappings), 100);
     }
 
     #[test]
