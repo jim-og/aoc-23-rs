@@ -56,9 +56,10 @@ pub fn day02(input: Vec<String>) -> (String, String) {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::parser;
 
     #[test]
-    fn day02_1_2() {
+    fn example_both() {
         let result = day02(vec![
             "Game 1: 3 blue, 4 red; 1 red, 2 green, 6 blue; 2 green".to_string(),
             "Game 2: 1 blue, 2 green; 3 green, 4 blue, 1 red; 1 green, 1 blue".to_string(),
@@ -68,5 +69,13 @@ mod tests {
         ]);
         assert_eq!(result.0, "8");
         assert_eq!(result.1, "2286");
+    }
+
+    #[test]
+    fn mainline() {
+        let input = parser::load_input(2);
+        let result = day02(input);
+        assert_eq!(result.0, "2278");
+        assert_eq!(result.1, "67953");
     }
 }

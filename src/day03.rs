@@ -91,9 +91,10 @@ pub fn day03(input: Vec<String>) -> (String, String) {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::parser;
 
     #[test]
-    fn day03_1_2() {
+    fn example_both() {
         let result = day03(vec![
             "467..114..".to_string(),
             "...*......".to_string(),
@@ -108,5 +109,13 @@ mod tests {
         ]);
         assert_eq!(result.0, "4361");
         assert_eq!(result.1, "467835");
+    }
+
+    #[test]
+    fn mainline() {
+        let input = parser::load_input(3);
+        let result = day03(input);
+        assert_eq!(result.0, "532331");
+        assert_eq!(result.1, "82301120");
     }
 }

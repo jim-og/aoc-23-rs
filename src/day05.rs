@@ -213,6 +213,7 @@ pub fn day05(input: Vec<String>) -> (String, String) {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::parser;
 
     #[test]
     fn mapping_source_to_destination() {
@@ -265,7 +266,7 @@ mod tests {
     }
 
     #[test]
-    fn day05_1() {
+    fn example_both() {
         let result = day05(vec![
             "seeds: 79 14 55 13".to_string(),
             "".to_string(),
@@ -303,5 +304,13 @@ mod tests {
         ]);
         assert_eq!(result.0, "35");
         assert_eq!(result.1, "46");
+    }
+
+    #[test]
+    fn mainline() {
+        let input = parser::load_input(5);
+        let result = day05(input);
+        assert_eq!(result.0, "462648396");
+        assert_eq!(result.1, "2520479");
     }
 }

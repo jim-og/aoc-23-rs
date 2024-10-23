@@ -62,9 +62,10 @@ fn solve(input: &Vec<String>, lookup: HashMap<&str, i32>) -> u32 {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::parser;
 
     #[test]
-    fn day01_1() {
+    fn example_1() {
         assert_eq!(
             day01(vec![
                 "1abc2".to_string(),
@@ -78,7 +79,7 @@ mod tests {
     }
 
     #[test]
-    fn day01_2() {
+    fn example_2() {
         assert_eq!(
             day01(vec![
                 "nqninenmvnpsz874".to_string(),
@@ -92,5 +93,13 @@ mod tests {
             .1,
             "493".to_string()
         )
+    }
+
+    #[test]
+    fn mainline() {
+        let input = parser::load_input(1);
+        let result = day01(input);
+        assert_eq!(result.0, "56397");
+        assert_eq!(result.1, "55701");
     }
 }

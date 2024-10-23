@@ -1,14 +1,12 @@
-use std::{
-    env,
-    fs::File,
-    io::{self, BufRead, BufReader},
-};
+use std::env;
+
 mod day00;
 mod day01;
 mod day02;
 mod day03;
 mod day04;
 mod day05;
+mod parser;
 
 type DayFn = fn(Vec<String>) -> (String, String);
 const DAYS: [DayFn; 6] = [
@@ -20,16 +18,6 @@ const DAYS: [DayFn; 6] = [
     day05::day05,
 ];
 
-fn load_input(day: usize) -> Vec<String> {
-    let path = format!("{}/{}.txt", "inputs", day);
-    let f: File = File::open(path).unwrap();
-    let reader: BufReader<File> = BufReader::new(f);
-    reader
-        .lines()
-        .collect::<io::Result<Vec<String>>>()
-        .expect("Unable to open file")
-}
-
 fn main() {
     let args: Vec<String> = env::args().collect();
     if args.len() != 2 {
@@ -39,7 +27,7 @@ fn main() {
         .parse::<usize>()
         .expect("Day parameter not an integer");
 
-    let input = load_input(day);
+    let input = parser::load_input(day);
     let (part1, part2) = DAYS[day](input);
     println!("Part 1: {}\nPart 2: {}", part1, part2);
 }
