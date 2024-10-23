@@ -1,12 +1,5 @@
 use std::collections::{HashMap, HashSet};
 
-// plan
-// iterate over each character in input
-// decide whether it is a period, a part, or a symbol
-// store each point in a hashmap with key (row, col) and it's value
-// value should be an enum which is either Period, Symbol(char) or Part(number)
-// number should be the full part number, not just the number at that point
-
 enum Point {
     Period,
     Symbol(char),
