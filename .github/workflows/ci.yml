@@ -16,14 +16,28 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v3
 
+    - name: Cache cargo-tarpaulin and cargo registry
+      uses: actions/cache@v3
+      with:
+        path: |
+          ~/.cargo/bin/cargo-tarpaulin
+          ~/.cargo/registry
+          ~/.cargo/git
+        key: ${{ runner.os }}-cargo-tarpaulin-${{ hashFiles('Cargo.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-cargo-tarpaulin-
+
     - name: Install Rust
       uses: actions-rs/toolchain@v1
       with:
         toolchain: stable
         components: clippy, rustfmt
 
-    - name: Install tarpaulin for coverage
-      run: cargo install cargo-tarpaulin
+    - name: Install tarpaulin (if not cached)
+      run: |
+        if ! command -v cargo-tarpaulin &> /dev/null; then
+          cargo install cargo-tarpaulin
+        fi
 
     - name: Run rustfmt check
       run: cargo fmt -- --check
