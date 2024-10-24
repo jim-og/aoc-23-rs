@@ -1,6 +1,5 @@
 use std::env;
 
-mod day00;
 mod day01;
 mod day02;
 mod day03;
@@ -9,8 +8,7 @@ mod day05;
 mod parser;
 
 type DayFn = fn(Vec<String>) -> (String, String);
-const DAYS: [DayFn; 6] = [
-    day00::day00,
+const DAYS: [DayFn; 5] = [
     day01::day01,
     day02::day02,
     day03::day03,
@@ -28,6 +26,6 @@ fn main() {
         .expect("Day parameter not an integer");
 
     let input = parser::load_input(day);
-    let (part1, part2) = DAYS[day](input);
+    let (part1, part2) = DAYS[day - 1](input);
     println!("Part 1: {}\nPart 2: {}", part1, part2);
 }
