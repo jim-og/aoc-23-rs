@@ -22,6 +22,9 @@ jobs:
         toolchain: stable
         components: clippy, rustfmt
 
+    - name: Install tarpaulin for coverage
+      run: cargo install cargo-tarpaulin
+
     - name: Run rustfmt check
       run: cargo fmt -- --check
 
