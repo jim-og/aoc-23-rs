@@ -7,10 +7,11 @@ mod day04;
 mod day05;
 mod day06;
 mod day07;
+mod day08;
 mod parser;
 
 type DayFn = fn(Vec<String>) -> (String, String);
-const DAYS: [DayFn; 7] = [
+const DAYS: [DayFn; 8] = [
     day01::day01,
     day02::day02,
     day03::day03,
@@ -18,6 +19,7 @@ const DAYS: [DayFn; 7] = [
     day05::day05,
     day06::day06,
     day07::day07,
+    day08::day08,
 ];
 
 fn main() {
