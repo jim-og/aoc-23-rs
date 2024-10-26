@@ -8,6 +8,11 @@ enum NodeType {
     Terminating,
 }
 
+enum Part {
+    Part1,
+    Part2,
+}
+
 struct Node {
     id: String,
     left: String,
@@ -16,7 +21,7 @@ struct Node {
 }
 
 impl Node {
-    pub fn new(input: &str) -> Self {
+    pub fn new(input: &str, part: &Part) -> Self {
         let split = input.split_whitespace().collect::<Vec<&str>>();
         let id = split
             .first()
@@ -29,14 +34,21 @@ impl Node {
             .get(3)
             .expect("Expected a right instruction")
             .trim_matches(')');
-        let node_type = match id
-            .chars()
-            .nth(2)
-            .expect("Expected id to have a 3rd character")
-        {
-            'A' => NodeType::Starting,
-            'Z' => NodeType::Terminating,
-            _ => NodeType::Normal,
+        let node_type = match part {
+            Part::Part1 => match *id {
+                "AAA" => NodeType::Starting,
+                "ZZZ" => NodeType::Terminating,
+                _ => NodeType::Normal,
+            },
+            Part::Part2 => match id
+                .chars()
+                .nth(2)
+                .expect("Expected id to have a 3rd character")
+            {
+                'A' => NodeType::Starting,
+                'Z' => NodeType::Terminating,
+                _ => NodeType::Normal,
+            },
         };
 
         Node {
@@ -48,26 +60,7 @@ impl Node {
     }
 }
 
-fn part_1(nodes: &HashMap<String, Node>, instructions: &str) -> usize {
-    let mut steps = 0;
-    let mut step = "AAA";
-    while step != "ZZZ" {
-        let instruction = instructions
-            .chars()
-            .nth(steps % instructions.len())
-            .expect("Expected");
-        let node = nodes.get(step).expect("Couldn't find node");
-        if instruction == 'L' {
-            step = &node.left;
-        } else {
-            step = &node.right;
-        }
-        steps += 1;
-    }
-    steps
-}
-
-fn part_2(nodes: &HashMap<String, Node>, instructions: &str) -> usize {
+fn solve(nodes: &HashMap<String, Node>, instructions: &str) -> usize {
     let starting_nodes = nodes
         .values()
         .filter(|n| n.node_type == NodeType::Starting)
@@ -102,7 +95,7 @@ pub fn day08(input: Vec<String>) -> (String, String) {
     (result_1.to_string(), result_2.to_string())
 }
 
-fn parse_input(input: &Vec<String>) -> (HashMap<String, Node>, String) {
+fn parse_input(input: &Vec<String>, part: Part) -> (HashMap<String, Node>, String) {
     let mut instructions = String::new();
     let mut nodes = HashMap::new();
     for line in input {
@@ -113,20 +106,20 @@ fn parse_input(input: &Vec<String>) -> (HashMap<String, Node>, String) {
         if line.is_empty() {
             continue;
         }
-        let node = Node::new(line);
+        let node = Node::new(line, &part);
         nodes.insert(node.id.clone(), node);
     }
     (nodes, instructions)
 }
 
 fn day08_1(input: &Vec<String>) -> String {
-    let (nodes, instructions) = parse_input(input);
-    format!("{}", part_1(&nodes, &instructions))
+    let (nodes, instructions) = parse_input(input, Part::Part1);
+    format!("{}", solve(&nodes, &instructions))
 }
 
 fn day08_2(input: &Vec<String>) -> String {
-    let (nodes, instructions) = parse_input(input);
-    format!("{}", part_2(&nodes, &instructions))
+    let (nodes, instructions) = parse_input(input, Part::Part2);
+    format!("{}", solve(&nodes, &instructions))
 }
 
 #[cfg(test)]
