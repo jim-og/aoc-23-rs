@@ -1,8 +1,3 @@
-enum Direction {
-    Forward,
-    Backward,
-}
-
 pub fn day09(input: Vec<String>) -> (String, String) {
     let mut part_1 = Vec::new();
     let mut part_2 = Vec::new();
@@ -11,8 +6,10 @@ pub fn day09(input: Vec<String>) -> (String, String) {
             .split_whitespace()
             .map(|n| n.parse::<i32>().expect("Failed to parse input"))
             .collect::<Vec<i32>>();
-        part_1.push(extrapolate(&history, Direction::Forward));
-        part_2.push(extrapolate(&history, Direction::Backward));
+        part_1.push(extrapolate(&history));
+        part_2.push(extrapolate(
+            &history.into_iter().rev().collect::<Vec<i32>>(),
+        ));
     }
     (
         format!("{}", part_1.iter().sum::<i32>()),
@@ -20,33 +17,16 @@ pub fn day09(input: Vec<String>) -> (String, String) {
     )
 }
 
-fn extrapolate(history: &[i32], direction: Direction) -> i32 {
-    let first_iter = history.iter();
-    let second_iter = history.iter().skip(1);
-    let diffs = first_iter
-        .zip(second_iter)
-        .map(|(current, next)| next - current)
+fn extrapolate(history: &[i32]) -> i32 {
+    let diffs = history
+        .windows(2)
+        .map(|window| window[1] - window[0])
         .collect::<Vec<i32>>();
-    let all_zeros = diffs.iter().filter(|diff| **diff == 0).count() == diffs.len();
-    match direction {
-        Direction::Forward => {
-            let last_history = *history.last().expect("Expected history to contain a value");
-            if all_zeros {
-                last_history
-            } else {
-                last_history + extrapolate(&diffs, direction)
-            }
-        }
-        Direction::Backward => {
-            let first_history = *history
-                .first()
-                .expect("Expected history to contain a value");
-            if all_zeros {
-                first_history
-            } else {
-                first_history - extrapolate(&diffs, direction)
-            }
-        }
+    let last_history = *history.last().expect("Expected history to contain a value");
+    if diffs.iter().all(|diff| *diff == 0) {
+        last_history
+    } else {
+        last_history + extrapolate(&diffs)
     }
 }
 
