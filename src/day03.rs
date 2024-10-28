@@ -92,18 +92,18 @@ mod tests {
 
     #[test]
     fn example_both() {
-        let result = day03(vec![
-            "467..114..".to_string(),
-            "...*......".to_string(),
-            "..35..633.".to_string(),
-            "......#...".to_string(),
-            "617*......".to_string(),
-            ".....+.58.".to_string(),
-            "..592.....".to_string(),
-            "......755.".to_string(),
-            "...$.*....".to_string(),
-            ".664.598..".to_string(),
-        ]);
+        let result = day03(parser::test_input(
+            "467..114..
+            ...*......
+            ..35..633.
+            ......#...
+            617*......
+            .....+.58.
+            ..592.....
+            ......755.
+            ...$.*....
+            .664.598..",
+        ));
         assert_eq!(result.0, "4361");
         assert_eq!(result.1, "467835");
     }

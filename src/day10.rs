@@ -7,6 +7,17 @@ enum Heading {
     West,
 }
 
+impl Heading {
+    pub fn from(&self, loc: (i32, i32)) -> (i32, i32) {
+        match self {
+            Heading::North => (loc.0 - 1, loc.1),
+            Heading::East => (loc.0, loc.1 + 1),
+            Heading::South => (loc.0 + 1, loc.1),
+            Heading::West => (loc.0, loc.1 - 1),
+        }
+    }
+}
+
 #[derive(PartialEq)]
 enum Route {
     NorthAndSouth,
@@ -68,15 +79,6 @@ impl Point {
     }
 }
 
-fn get_next_loc(loc: (i32, i32), heading: &Heading) -> (i32, i32) {
-    match heading {
-        Heading::North => (loc.0 - 1, loc.1),
-        Heading::East => (loc.0, loc.1 + 1),
-        Heading::South => (loc.0 + 1, loc.1),
-        Heading::West => (loc.0, loc.1 - 1),
-    }
-}
-
 pub fn day10(input: Vec<String>) -> (String, String) {
     let mut points = HashMap::new();
     let mut start: Option<(i32, i32)> = None;
@@ -93,7 +95,7 @@ pub fn day10(input: Vec<String>) -> (String, String) {
     // Find a valid route from the start
     let mut heading = Heading::North;
     for h in [Heading::North, Heading::East, Heading::South, Heading::West] {
-        let next_loc = get_next_loc(start.expect("No starting coord"), &h);
+        let next_loc = h.from(start.expect("No starting coord"));
         if let Some(point) = points.get(&next_loc) {
             if point.get_heading(&h).is_some() {
                 heading = h;
@@ -103,16 +105,16 @@ pub fn day10(input: Vec<String>) -> (String, String) {
     }
 
     let mut steps = 1;
-    let mut loc = get_next_loc(start.unwrap(), &heading);
+    let mut loc = heading.from(start.unwrap());
     let mut point = points.get(&loc).expect("No point at location");
     while point.route != Route::Start {
         heading = point.get_heading(&heading).expect("Heading not valid");
-        loc = get_next_loc(loc, &heading);
+        loc = heading.from(loc);
         point = points.get(&loc).expect("No point at location");
         steps += 1;
     }
 
-    (format!("{}", steps / 2), format!("{}", ""))
+    (format!("{}", steps / 2), "".to_string())
 }
 
 #[cfg(test)]
@@ -122,23 +124,23 @@ mod tests {
 
     #[test]
     fn example_both() {
-        let result_1 = day10(vec![
-            "-L|F7".to_string(),
-            "7S-7|".to_string(),
-            "L|7||".to_string(),
-            "-L-J|".to_string(),
-            "L|-JF".to_string(),
-        ]);
+        let result_1 = day10(parser::test_input(
+            "-L|F7
+            7S-7|
+            L|7||
+            -L-J|
+            L|-JF",
+        ));
         assert_eq!(result_1.0, "4");
         assert_eq!(result_1.1, "");
 
-        let result_2 = day10(vec![
-            "7-F7-".to_string(),
-            ".FJ|7".to_string(),
-            "SJLL7".to_string(),
-            "|F--J".to_string(),
-            "LJ.LJ".to_string(),
-        ]);
+        let result_2 = day10(parser::test_input(
+            "7-F7-
+            .FJ|7
+            SJLL7
+            |F--J
+            LJ.LJ",
+        ));
         assert_eq!(result_2.0, "8");
         assert_eq!(result_2.1, "");
     }

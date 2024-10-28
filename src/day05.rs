@@ -264,41 +264,41 @@ mod tests {
 
     #[test]
     fn example_both() {
-        let result = day05(vec![
-            "seeds: 79 14 55 13".to_string(),
-            "".to_string(),
-            "seed-to-soil map:".to_string(),
-            "50 98 2".to_string(),
-            "52 50 48".to_string(),
-            "".to_string(),
-            "soil-to-fertilizer map:".to_string(),
-            "0 15 37".to_string(),
-            "37 52 2".to_string(),
-            "39 0 15".to_string(),
-            "".to_string(),
-            "fertilizer-to-water map:".to_string(),
-            "49 53 8".to_string(),
-            "0 11 42".to_string(),
-            "42 0 7".to_string(),
-            "57 7 4".to_string(),
-            "".to_string(),
-            "water-to-light map:".to_string(),
-            "88 18 7".to_string(),
-            "18 25 70".to_string(),
-            "".to_string(),
-            "light-to-temperature map:".to_string(),
-            "45 77 23".to_string(),
-            "81 45 19".to_string(),
-            "68 64 13".to_string(),
-            "".to_string(),
-            "temperature-to-humidity map:".to_string(),
-            "0 69 1".to_string(),
-            "1 0 69".to_string(),
-            "".to_string(),
-            "humidity-to-location map:".to_string(),
-            "60 56 37".to_string(),
-            "56 93 4".to_string(),
-        ]);
+        let result = day05(parser::test_input(
+            "seeds: 79 14 55 13
+            
+            seed-to-soil map:
+            50 98 2
+            52 50 48
+            
+            soil-to-fertilizer map:
+            0 15 37
+            37 52 2
+            39 0 15
+            
+            fertilizer-to-water map:
+            49 53 8
+            0 11 42
+            42 0 7
+            57 7 4
+            
+            water-to-light map:
+            88 18 7
+            18 25 70
+           
+            light-to-temperature map:
+            45 77 23
+            81 45 19
+            68 64 13
+
+            temperature-to-humidity map:
+            0 69 1
+            1 0 69
+         
+            humidity-to-location map:
+            60 56 37
+            56 93 4",
+        ));
         assert_eq!(result.0, "35");
         assert_eq!(result.1, "46");
     }

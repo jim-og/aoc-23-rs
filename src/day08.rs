@@ -129,43 +129,43 @@ mod tests {
 
     #[test]
     fn example_part_1() {
-        let result_1 = day08_1(&vec![
-            "RL".to_string(),
-            "".to_string(),
-            "AAA = (BBB, CCC)".to_string(),
-            "BBB = (DDD, EEE)".to_string(),
-            "CCC = (ZZZ, GGG)".to_string(),
-            "DDD = (DDD, DDD)".to_string(),
-            "EEE = (EEE, EEE)".to_string(),
-            "GGG = (GGG, GGG)".to_string(),
-            "ZZZ = (ZZZ, ZZZ)".to_string(),
-        ]);
+        let result_1 = day08_1(&parser::test_input(
+            "RL
+            
+            AAA = (BBB, CCC)
+            BBB = (DDD, EEE)
+            CCC = (ZZZ, GGG)
+            DDD = (DDD, DDD)
+            EEE = (EEE, EEE)
+            GGG = (GGG, GGG)
+            ZZZ = (ZZZ, ZZZ)",
+        ));
         assert_eq!(result_1, "2");
 
-        let result_2 = day08_1(&vec![
-            "LLR".to_string(),
-            "".to_string(),
-            "AAA = (BBB, BBB)".to_string(),
-            "BBB = (AAA, ZZZ)".to_string(),
-            "ZZZ = (ZZZ, ZZZ)".to_string(),
-        ]);
+        let result_2 = day08_1(&parser::test_input(
+            "LLR
+            
+            AAA = (BBB, BBB)
+            BBB = (AAA, ZZZ)
+            ZZZ = (ZZZ, ZZZ)",
+        ));
         assert_eq!(result_2, "6");
     }
 
     #[test]
     fn example_part_2() {
-        let result = day08_2(&vec![
-            "LR".to_string(),
-            "".to_string(),
-            "11A = (11B, XXX)".to_string(),
-            "11B = (XXX, 11Z)".to_string(),
-            "11Z = (11B, XXX)".to_string(),
-            "22A = (22B, XXX)".to_string(),
-            "22B = (22C, 22C)".to_string(),
-            "22C = (22Z, 22Z)".to_string(),
-            "22Z = (22B, 22B)".to_string(),
-            "XXX = (XXX, XXX)".to_string(),
-        ]);
+        let result = day08_2(&parser::test_input(
+            "LR
+          
+            11A = (11B, XXX)
+            11B = (XXX, 11Z)
+            11Z = (11B, XXX)
+            22A = (22B, XXX)
+            22B = (22C, 22C)
+            22C = (22Z, 22Z)
+            22Z = (22B, 22B)
+            XXX = (XXX, XXX)",
+        ));
         assert_eq!(result, "6");
     }
 

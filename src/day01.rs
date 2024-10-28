@@ -81,15 +81,15 @@ mod tests {
     #[test]
     fn example_2() {
         assert_eq!(
-            day01(vec![
-                "nqninenmvnpsz874".to_string(),
-                "8twofpmpxkvvdnpdnlpkhseven4ncgkb".to_string(),
-                "six8shdkdcdgseven8xczqrnnmthreecckfive".to_string(),
-                "qlcnz54dd75nine7jfnlfgz".to_string(),
-                "7vrdhggdkqbnltlgpkkvsdxn2mfpghkntzrhtjgtxr".to_string(),
-                "cdhmktwo6kjqbprvfour8".to_string(),
-                "ninekkvkeight9three".to_string(),
-            ])
+            day01(parser::test_input(
+                "nqninenmvnpsz874
+                8twofpmpxkvvdnpdnlpkhseven4ncgkb
+                six8shdkdcdgseven8xczqrnnmthreecckfive
+                qlcnz54dd75nine7jfnlfgz
+                7vrdhggdkqbnltlgpkkvsdxn2mfpghkntzrhtjgtxr
+                cdhmktwo6kjqbprvfour8
+                ninekkvkeight9three",
+            ))
             .1,
             "493".to_string()
         )

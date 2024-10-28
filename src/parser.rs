@@ -12,3 +12,11 @@ pub fn load_input(day: usize) -> Vec<String> {
         .collect::<io::Result<Vec<String>>>()
         .expect("Unable to open file")
 }
+
+#[cfg(test)]
+pub fn test_input(input: &str) -> Vec<String> {
+    input
+        .lines()
+        .map(|l| l.trim().to_string())
+        .collect::<Vec<String>>()
+}

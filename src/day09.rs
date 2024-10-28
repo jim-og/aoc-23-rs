@@ -37,11 +37,11 @@ mod tests {
 
     #[test]
     fn example_both() {
-        let result = day09(vec![
-            "0 3 6 9 12 15".to_string(),
-            "1 3 6 10 15 21".to_string(),
-            "10 13 16 21 30 45".to_string(),
-        ]);
+        let result = day09(parser::test_input(
+            "0 3 6 9 12 15
+            1 3 6 10 15 21
+            10 13 16 21 30 45",
+        ));
         assert_eq!(result.0, "114");
         assert_eq!(result.1, "2");
     }

@@ -82,10 +82,10 @@ mod tests {
 
     #[test]
     fn example_both() {
-        let result = day06(vec![
-            "Time:      7  15   30".to_string(),
-            "Distance:  9  40  200".to_string(),
-        ]);
+        let result = day06(parser::test_input(
+            "Time:      7  15   30
+            Distance:  9  40  200",
+        ));
         assert_eq!(result.0, "288");
         assert_eq!(result.1, "71503");
     }

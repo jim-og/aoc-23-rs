@@ -152,13 +152,13 @@ mod tests {
 
     #[test]
     fn example_both() {
-        let result = day07(vec![
-            "32T3K 765".to_string(),
-            "T55J5 684".to_string(),
-            "KK677 28".to_string(),
-            "KTJJT 220".to_string(),
-            "QQQJA 483".to_string(),
-        ]);
+        let result = day07(parser::test_input(
+            "32T3K 765
+            T55J5 684
+            KK677 28
+            KTJJT 220
+            QQQJA 483"
+        ));
         assert_eq!(result.0, "6440");
         assert_eq!(result.1, "5905");
     }
