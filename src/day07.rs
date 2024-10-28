@@ -157,7 +157,7 @@ mod tests {
             T55J5 684
             KK677 28
             KTJJT 220
-            QQQJA 483"
+            QQQJA 483",
         ));
         assert_eq!(result.0, "6440");
         assert_eq!(result.1, "5905");
