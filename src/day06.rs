@@ -81,7 +81,7 @@ mod tests {
     use crate::parser;
 
     #[test]
-    fn example_both() {
+    fn example() {
         let result = day06(parser::test_input(
             "Time:      7  15   30
             Distance:  9  40  200",

@@ -16,6 +16,7 @@ pub fn load_input(day: usize) -> Vec<String> {
 #[cfg(test)]
 pub fn test_input(input: &str) -> Vec<String> {
     input
+        .trim()
         .lines()
         .map(|l| l.trim().to_string())
         .collect::<Vec<String>>()

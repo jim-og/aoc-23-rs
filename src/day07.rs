@@ -151,7 +151,7 @@ mod tests {
     use crate::parser;
 
     #[test]
-    fn example_both() {
+    fn example() {
         let result = day07(parser::test_input(
             "32T3K 765
             T55J5 684

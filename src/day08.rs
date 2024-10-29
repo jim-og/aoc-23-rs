@@ -126,30 +126,37 @@ fn day08_2(input: &Vec<String>) -> String {
 mod tests {
     use super::*;
     use crate::parser;
+    use test_case::test_case;
 
-    #[test]
-    fn example_part_1() {
-        let result_1 = day08_1(&parser::test_input(
-            "RL
+    #[test_case(
+        "
+        RL
             
-            AAA = (BBB, CCC)
-            BBB = (DDD, EEE)
-            CCC = (ZZZ, GGG)
-            DDD = (DDD, DDD)
-            EEE = (EEE, EEE)
-            GGG = (GGG, GGG)
-            ZZZ = (ZZZ, ZZZ)",
-        ));
-        assert_eq!(result_1, "2");
-
-        let result_2 = day08_1(&parser::test_input(
-            "LLR
+        AAA = (BBB, CCC)
+        BBB = (DDD, EEE)
+        CCC = (ZZZ, GGG)
+        DDD = (DDD, DDD)
+        EEE = (EEE, EEE)
+        GGG = (GGG, GGG)
+        ZZZ = (ZZZ, ZZZ)
+        ",
+        "2"
+        ;"1"
+    )]
+    #[test_case(
+        "
+        LLR
             
-            AAA = (BBB, BBB)
-            BBB = (AAA, ZZZ)
-            ZZZ = (ZZZ, ZZZ)",
-        ));
-        assert_eq!(result_2, "6");
+        AAA = (BBB, BBB)
+        BBB = (AAA, ZZZ)
+        ZZZ = (ZZZ, ZZZ)
+        ",
+        "6"
+        ;"2"
+    )]
+    fn example_part_1(input: &str, answer: &str) {
+        let result = day08_1(&parser::test_input(input));
+        assert_eq!(result, answer);
     }
 
     #[test]

@@ -141,21 +141,32 @@ mod tests {
     use crate::parser;
     use test_case::test_case;
 
-    #[test_case("
+    #[test_case(
+        "
         -L|F7
         7S-7|
         L|7||
         -L-J|
         L|-JF
-        ","4","1";"one")]
-    #[test_case("
+        ",
+        "4",
+        "1"
+        ;"1"
+    )]
+    #[test_case(
+        "
         7-F7-
         .FJ|7
         SJLL7
         |F--J
         LJ.LJ
-        ","8","1"; "two")]
-    #[test_case("
+        ",
+        "8",
+        "1"
+        ;"2"
+    )]
+    #[test_case(
+        "
         ...........
         .S-------7.
         .|F-----7|.
@@ -165,8 +176,13 @@ mod tests {
         .|..|.|..|.
         .L--J.L--J.
         ...........
-        ","23","4"; "three")]
-    #[test_case("
+        ",
+        "23",
+        "4"
+        ;"3"
+    )]
+    #[test_case(
+        "
         FF7FSF7F7F7F7F7F---7
         L|LJ||||||||||||F--J
         FL-7LJLJ||||||LJL-77
@@ -177,7 +193,11 @@ mod tests {
         7-L-JL7||F7|L7F-7F7|
         L.L7LFJ|||||FJL7||LJ
         L7JLJL-JLJLJL--JLJ.L
-        ","80","10"; "four")]
+        ",
+        "80",
+        "10"
+        ;"4"
+    )]
     fn example_both(input: &str, part_1: &str, part_2: &str) {
         let result_1 = day10(parser::test_input(input));
         assert_eq!(result_1.0, part_1);

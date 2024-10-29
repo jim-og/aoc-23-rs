@@ -263,7 +263,7 @@ mod tests {
     }
 
     #[test]
-    fn example_both() {
+    fn example() {
         let result = day05(parser::test_input(
             "seeds: 79 14 55 13
             
