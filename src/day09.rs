@@ -36,7 +36,7 @@ mod tests {
     use crate::parser;
 
     #[test]
-    fn example_both() {
+    fn example() {
         let result = day09(parser::test_input(
             "0 3 6 9 12 15
             1 3 6 10 15 21
