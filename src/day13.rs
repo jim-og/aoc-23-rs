@@ -136,7 +136,7 @@ pub fn input_generator(input: &str) -> Vec<Pattern> {
 }
 
 #[aoc(day13, part1)]
-fn part1(patterns: &Vec<Pattern>) -> usize {
+fn part1(patterns: &[Pattern]) -> usize {
     let scores = patterns
         .iter()
         .map(
@@ -152,7 +152,7 @@ fn part1(patterns: &Vec<Pattern>) -> usize {
 }
 
 #[aoc(day13, part2)]
-fn part2(patterns: &Vec<Pattern>) -> usize {
+fn part2(patterns: &[Pattern]) -> usize {
     let scores = patterns
         .iter()
         .map(

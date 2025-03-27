@@ -1,4 +1,4 @@
-use std::{collections::HashMap, i32};
+use std::collections::HashMap;
 
 type Point = (i32, i32);
 

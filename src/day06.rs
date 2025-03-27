@@ -57,7 +57,7 @@ pub fn input_generator(input: &str) -> Vec<String> {
 }
 
 #[aoc(day6, part1)]
-pub fn part1(input: &Vec<String>) -> u64 {
+pub fn part1(input: &[String]) -> u64 {
     let times = parse_input_part_1(0, input);
     let records = parse_input_part_1(1, input);
     let mut races = Vec::new();
@@ -76,7 +76,7 @@ pub fn part1(input: &Vec<String>) -> u64 {
 }
 
 #[aoc(day6, part2)]
-pub fn part2(input: &Vec<String>) -> u64 {
+pub fn part2(input: &[String]) -> u64 {
     let time = parse_input_part_2(0, input);
     let record = parse_input_part_2(1, input);
     Race { time, record }.ways_to_win()

@@ -125,7 +125,7 @@ pub fn input_generator(input: &str) -> Vec<String> {
 }
 
 #[aoc(day7, part1)]
-pub fn part1(input: &Vec<String>) -> u32 {
+pub fn part1(input: &[String]) -> u32 {
     let mut part_1_hands = input
         .iter()
         .map(|line| Hand::new(line, false))
@@ -140,7 +140,7 @@ pub fn part1(input: &Vec<String>) -> u32 {
 }
 
 #[aoc(day7, part2)]
-pub fn part2(input: &Vec<String>) -> u32 {
+pub fn part2(input: &[String]) -> u32 {
     let mut part_2_hands = input
         .iter()
         .map(|line| Hand::new(line, true))

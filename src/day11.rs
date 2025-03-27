@@ -63,12 +63,12 @@ pub fn input_generator(input: &str) -> Vec<String> {
 }
 
 #[aoc(day11, part1)]
-pub fn part1(input: &Vec<String>) -> usize {
+pub fn part1(input: &[String]) -> usize {
     solve(input, 2)
 }
 
 #[aoc(day11, part2)]
-pub fn part2(input: &Vec<String>) -> usize {
+pub fn part2(input: &[String]) -> usize {
     solve(input, 1000000)
 }
 
