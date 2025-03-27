@@ -101,7 +101,7 @@ pub fn input_generator(input: &str) -> Vec<String> {
 
 #[aoc(day12, part1)]
 pub fn part1(input: &Vec<String>) -> usize {
-    let records_1 = parse_input(&input, 1);
+    let records_1 = parse_input(input, 1);
     let mut part_1 = Vec::new();
     for record in records_1 {
         part_1.push(solve(&record.springs, &record.groups, &mut HashMap::new()));
@@ -111,7 +111,7 @@ pub fn part1(input: &Vec<String>) -> usize {
 
 #[aoc(day12, part2)]
 pub fn part2(input: &Vec<String>) -> usize {
-    let records_2 = parse_input(&input, 5);
+    let records_2 = parse_input(input, 5);
     let mut part_2 = Vec::new();
     for record in records_2 {
         part_2.push(solve(&record.springs, &record.groups, &mut HashMap::new()));

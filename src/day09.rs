@@ -12,7 +12,7 @@ pub fn input_generator(input: &str) -> Vec<Vec<i32>> {
 
 #[aoc(day9, part1)]
 pub fn part1(input: &Vec<Vec<i32>>) -> i32 {
-    input.iter().map(|history| extrapolate(history)).sum()
+    input.iter().map(extrapolate).sum()
 }
 
 #[aoc(day9, part2)]
