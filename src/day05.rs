@@ -109,11 +109,7 @@ pub fn input_generator(input: &str) -> Data {
     let mut res = Data::default();
     let mut state: State = State::new();
 
-    for line in input
-        .trim()
-        .lines()
-        .map(|l| l.trim())
-    {
+    for line in input.trim().lines().map(|l| l.trim()) {
         // Transition to next state
         if line.is_empty() {
             state = state.next();
