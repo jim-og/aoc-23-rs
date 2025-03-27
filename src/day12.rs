@@ -1,5 +1,7 @@
 use std::collections::HashMap;
 
+use crate::parser;
+
 struct Record {
     springs: String,
     groups: Vec<usize>,
@@ -92,21 +94,29 @@ fn solve(
     total
 }
 
-pub fn day12(input: Vec<String>) -> (String, String) {
+#[aoc_generator(day12)]
+pub fn input_generator(input: &str) -> Vec<String> {
+    parser::test_input(input)
+}
+
+#[aoc(day12, part1)]
+pub fn part1(input: &Vec<String>) -> usize {
     let records_1 = parse_input(&input, 1);
     let mut part_1 = Vec::new();
     for record in records_1 {
         part_1.push(solve(&record.springs, &record.groups, &mut HashMap::new()));
     }
+    part_1.iter().sum::<usize>()
+}
+
+#[aoc(day12, part2)]
+pub fn part2(input: &Vec<String>) -> usize {
     let records_2 = parse_input(&input, 5);
     let mut part_2 = Vec::new();
     for record in records_2 {
         part_2.push(solve(&record.springs, &record.groups, &mut HashMap::new()));
     }
-    (
-        format!("{}", part_1.iter().sum::<usize>()),
-        format!("{}", part_2.iter().sum::<usize>()),
-    )
+    part_2.iter().sum::<usize>()
 }
 
 #[cfg(test)]
@@ -116,23 +126,22 @@ mod tests {
 
     #[test]
     fn example() {
-        let result = day12(parser::test_input(
+        let input = input_generator(
             "???.### 1,1,3
             .??..??...?##. 1,1,3
             ?#?#?#?#?#?#?#? 1,3,1,6
             ????.#...#... 4,1,1
             ????.######..#####. 1,6,5
             ?###???????? 3,2,1",
-        ));
-        assert_eq!(result.0, "21");
-        assert_eq!(result.1, "525152");
+        );
+        assert_eq!(part1(&input), 21);
+        assert_eq!(part2(&input), 525152);
     }
 
     #[test]
     fn mainline() {
-        let input = parser::load_input(12);
-        let result = day12(input);
-        assert_eq!(result.0, "7307");
-        assert_eq!(result.1, "3415570893842");
+        let input = input_generator(&parser::load_input_string(12));
+        assert_eq!(part1(&input), 7307);
+        assert_eq!(part2(&input), 3415570893842);
     }
 }

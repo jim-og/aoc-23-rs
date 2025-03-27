@@ -1,34 +1,24 @@
 use std::collections::{HashMap, HashSet};
 
-enum Point {
+pub enum Point {
     Period,
     Symbol(char),
     Part(u32),
 }
 
-fn process_part(
-    schematic: &mut HashMap<(usize, usize), Point>,
-    row: usize,
-    col: usize,
-    part: &mut Vec<char>,
-) {
-    let number = part
-        .iter()
-        .collect::<String>()
-        .parse::<u32>()
-        .expect("Unable to parse part number");
+type Schematic = HashMap<(usize, usize), Point>;
 
-    for i in 0..part.len() {
-        schematic.insert((row, col - i), Point::Part(number));
-    }
-    part.clear();
-}
-
-pub fn day03(input: Vec<String>) -> (String, String) {
+#[aoc_generator(day3)]
+pub fn input_generator(input: &str) -> Schematic {
     let mut schematic = HashMap::new();
 
     // Populate schematic
-    for (row, line) in input.iter().enumerate() {
+    for (row, line) in input
+        .trim()
+        .lines()
+        .map(|l| l.trim().to_string())
+        .enumerate()
+    {
         let mut part = Vec::new();
         for (col, c) in line.chars().enumerate() {
             match c {
@@ -56,11 +46,37 @@ pub fn day03(input: Vec<String>) -> (String, String) {
             process_part(&mut schematic, row, line.len() - 1, &mut part);
         }
     }
+    schematic
+}
 
+fn process_part(schematic: &mut Schematic, row: usize, col: usize, part: &mut Vec<char>) {
+    let number = part
+        .iter()
+        .collect::<String>()
+        .parse::<u32>()
+        .expect("Unable to parse part number");
+
+    for i in 0..part.len() {
+        schematic.insert((row, col - i), Point::Part(number));
+    }
+    part.clear();
+}
+
+#[aoc(day3, part1)]
+pub fn part1(schematic: &Schematic) -> u32 {
+    solve(schematic).0
+}
+
+#[aoc(day3, part2)]
+pub fn part2(schematic: &Schematic) -> u32 {
+    solve(schematic).1
+}
+
+fn solve(schematic: &Schematic) -> (u32, u32) {
     // Find symbols in the schematic and sum adjacent parts
     let mut part_1_parts = Vec::new();
     let mut part_2_sum = 0;
-    for ((row, col), point) in &schematic {
+    for ((row, col), point) in schematic {
         if let Point::Symbol(s) = point {
             let mut adjacent_parts = HashSet::new();
             for r in row - 1..row + 2 {
@@ -78,11 +94,7 @@ pub fn day03(input: Vec<String>) -> (String, String) {
             }
         }
     }
-
-    (
-        format!("{}", part_1_parts.iter().sum::<u32>()),
-        format!("{}", part_2_sum),
-    )
+    (part_1_parts.iter().sum::<u32>(), part_2_sum)
 }
 
 #[cfg(test)]
@@ -92,7 +104,7 @@ mod tests {
 
     #[test]
     fn example() {
-        let result = day03(parser::test_input(
+        let result = solve(&input_generator(
             "467..114..
             ...*......
             ..35..633.
@@ -104,15 +116,14 @@ mod tests {
             ...$.*....
             .664.598..",
         ));
-        assert_eq!(result.0, "4361");
-        assert_eq!(result.1, "467835");
+        assert_eq!(result.0, 4361);
+        assert_eq!(result.1, 467835);
     }
 
     #[test]
     fn mainline() {
-        let input = parser::load_input(3);
-        let result = day03(input);
-        assert_eq!(result.0, "532331");
-        assert_eq!(result.1, "82301120");
+        let result = solve(&input_generator(&parser::load_input_string(3)));
+        assert_eq!(result.0, 532331);
+        assert_eq!(result.1, 82301120);
     }
 }

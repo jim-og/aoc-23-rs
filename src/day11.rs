@@ -1,3 +1,5 @@
+use crate::parser;
+
 pub fn solve(input: &[String], expansion_factor: usize) -> usize {
     let mut image = Vec::new();
     let mut empty_row = Vec::new();
@@ -55,10 +57,19 @@ pub fn solve(input: &[String], expansion_factor: usize) -> usize {
     distances.iter().sum::<usize>()
 }
 
-pub fn day11(input: Vec<String>) -> (String, String) {
-    let part_1 = solve(&input, 2);
-    let part_2 = solve(&input, 1000000);
-    (format!("{}", part_1), format!("{}", part_2))
+#[aoc_generator(day11)]
+pub fn input_generator(input: &str) -> Vec<String> {
+    parser::test_input(input)
+}
+
+#[aoc(day11, part1)]
+pub fn part1(input: &Vec<String>) -> usize {
+    solve(&input, 2)
+}
+
+#[aoc(day11, part2)]
+pub fn part2(input: &Vec<String>) -> usize {
+    solve(&input, 1000000)
 }
 
 #[cfg(test)]
@@ -86,7 +97,7 @@ mod tests {
         ;"1"
     )]
     fn example(input: &str, answer_1: usize, answer_2: usize, answer_3: usize) {
-        let data = parser::test_input(input);
+        let data = input_generator(input);
         assert_eq!(solve(&data, 2), answer_1);
         assert_eq!(solve(&data, 10), answer_2);
         assert_eq!(solve(&data, 100), answer_3);
@@ -94,9 +105,8 @@ mod tests {
 
     #[test]
     fn mainline() {
-        let input = parser::load_input(11);
-        let result = day11(input);
-        assert_eq!(result.0, "9648398");
-        assert_eq!(result.1, "618800410814");
+        let input = input_generator(&parser::load_input_string(11));
+        assert_eq!(part1(&input), 9648398);
+        assert_eq!(part2(&input), 618800410814);
     }
 }

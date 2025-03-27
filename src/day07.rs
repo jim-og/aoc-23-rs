@@ -1,5 +1,7 @@
 use std::{cmp::Ordering, collections::HashSet};
 
+use crate::parser;
+
 #[derive(PartialEq, Eq, PartialOrd, Ord)]
 enum HandType {
     HighCard,
@@ -117,7 +119,13 @@ impl Ord for Hand {
     }
 }
 
-pub fn day07(input: Vec<String>) -> (String, String) {
+#[aoc_generator(day7)]
+pub fn input_generator(input: &str) -> Vec<String> {
+    parser::test_input(input)
+}
+
+#[aoc(day7, part1)]
+pub fn part1(input: &Vec<String>) -> u32 {
     let mut part_1_hands = input
         .iter()
         .map(|line| Hand::new(line, false))
@@ -125,11 +133,14 @@ pub fn day07(input: Vec<String>) -> (String, String) {
 
     part_1_hands.sort();
 
-    let part_1 = part_1_hands
+    part_1_hands
         .iter()
         .enumerate()
-        .fold(0, |acc, (i, hand)| acc + hand.bid * (i as u32 + 1));
+        .fold(0, |acc, (i, hand)| acc + hand.bid * (i as u32 + 1))
+}
 
+#[aoc(day7, part2)]
+pub fn part2(input: &Vec<String>) -> u32 {
     let mut part_2_hands = input
         .iter()
         .map(|line| Hand::new(line, true))
@@ -137,12 +148,10 @@ pub fn day07(input: Vec<String>) -> (String, String) {
 
     part_2_hands.sort();
 
-    let part_2 = part_2_hands
+    part_2_hands
         .iter()
         .enumerate()
-        .fold(0, |acc, (i, hand)| acc + hand.bid * (i as u32 + 1));
-
-    (format!("{}", part_1), format!("{}", part_2))
+        .fold(0, |acc, (i, hand)| acc + hand.bid * (i as u32 + 1))
 }
 
 #[cfg(test)]
@@ -152,22 +161,21 @@ mod tests {
 
     #[test]
     fn example() {
-        let result = day07(parser::test_input(
+        let input = input_generator(
             "32T3K 765
             T55J5 684
             KK677 28
             KTJJT 220
             QQQJA 483",
-        ));
-        assert_eq!(result.0, "6440");
-        assert_eq!(result.1, "5905");
+        );
+        assert_eq!(part1(&input), 6440);
+        assert_eq!(part2(&input), 5905);
     }
 
     #[test]
     fn mainline() {
-        let input = parser::load_input(7);
-        let result = day07(input);
-        assert_eq!(result.0, "247815719");
-        assert_eq!(result.1, "248747492");
+        let input = input_generator(&parser::load_input_string(7));
+        assert_eq!(part1(&input), 247815719);
+        assert_eq!(part2(&input), 248747492);
     }
 }

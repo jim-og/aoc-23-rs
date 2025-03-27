@@ -1,6 +1,8 @@
 use num_integer::lcm;
 use std::collections::HashMap;
 
+use crate::parser;
+
 #[derive(Eq, Hash, PartialEq)]
 enum NodeType {
     Starting,
@@ -60,6 +62,40 @@ impl Node {
     }
 }
 
+#[aoc_generator(day8)]
+pub fn input_generator(input: &str) -> Vec<String> {
+    parser::test_input(input)
+}
+
+#[aoc(day8, part1)]
+fn part1(input: &Vec<String>) -> usize {
+    let (nodes, instructions) = parse_input(input, Part::Part1);
+    solve(&nodes, &instructions)
+}
+
+#[aoc(day8, part2)]
+fn part2(input: &Vec<String>) -> usize {
+    let (nodes, instructions) = parse_input(input, Part::Part2);
+    solve(&nodes, &instructions)
+}
+
+fn parse_input(input: &Vec<String>, part: Part) -> (HashMap<String, Node>, String) {
+    let mut instructions = String::new();
+    let mut nodes = HashMap::new();
+    for line in input {
+        if instructions.is_empty() {
+            instructions = line.to_string();
+            continue;
+        }
+        if line.is_empty() {
+            continue;
+        }
+        let node = Node::new(line, &part);
+        nodes.insert(node.id.clone(), node);
+    }
+    (nodes, instructions)
+}
+
 fn solve(nodes: &HashMap<String, Node>, instructions: &str) -> usize {
     let starting_nodes = nodes
         .values()
@@ -89,39 +125,6 @@ fn solve(nodes: &HashMap<String, Node>, instructions: &str) -> usize {
     path_steps.iter().fold(1, |a, b| lcm(a, *b))
 }
 
-pub fn day08(input: Vec<String>) -> (String, String) {
-    let result_1 = day08_1(&input);
-    let result_2 = day08_2(&input);
-    (result_1.to_string(), result_2.to_string())
-}
-
-fn parse_input(input: &Vec<String>, part: Part) -> (HashMap<String, Node>, String) {
-    let mut instructions = String::new();
-    let mut nodes = HashMap::new();
-    for line in input {
-        if instructions.is_empty() {
-            instructions = line.to_string();
-            continue;
-        }
-        if line.is_empty() {
-            continue;
-        }
-        let node = Node::new(line, &part);
-        nodes.insert(node.id.clone(), node);
-    }
-    (nodes, instructions)
-}
-
-fn day08_1(input: &Vec<String>) -> String {
-    let (nodes, instructions) = parse_input(input, Part::Part1);
-    format!("{}", solve(&nodes, &instructions))
-}
-
-fn day08_2(input: &Vec<String>) -> String {
-    let (nodes, instructions) = parse_input(input, Part::Part2);
-    format!("{}", solve(&nodes, &instructions))
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -140,7 +143,7 @@ mod tests {
         GGG = (GGG, GGG)
         ZZZ = (ZZZ, ZZZ)
         ",
-        "2"
+        2
         ;"1"
     )]
     #[test_case(
@@ -151,17 +154,16 @@ mod tests {
         BBB = (AAA, ZZZ)
         ZZZ = (ZZZ, ZZZ)
         ",
-        "6"
+        6
         ;"2"
     )]
-    fn example_part_1(input: &str, answer: &str) {
-        let result = day08_1(&parser::test_input(input));
-        assert_eq!(result, answer);
+    fn example_part_1(input: &str, answer: usize) {
+        assert_eq!(part1(&input_generator(input)), answer);
     }
 
     #[test]
     fn example_part_2() {
-        let result = day08_2(&parser::test_input(
+        let input = input_generator(
             "LR
           
             11A = (11B, XXX)
@@ -172,15 +174,14 @@ mod tests {
             22C = (22Z, 22Z)
             22Z = (22B, 22B)
             XXX = (XXX, XXX)",
-        ));
-        assert_eq!(result, "6");
+        );
+        assert_eq!(part2(&input), 6);
     }
 
     #[test]
     fn mainline() {
-        let input = parser::load_input(8);
-        let result = day08(input);
-        assert_eq!(result.0, "13771");
-        assert_eq!(result.1, "13129439557681");
+        let input = input_generator(&parser::load_input_string(8));
+        assert_eq!(part1(&input), 13771);
+        assert_eq!(part2(&input), 13129439557681);
     }
 }

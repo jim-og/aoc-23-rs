@@ -92,18 +92,28 @@ fn get_source(destination: u64, mappings: &Vec<Mapping>) -> u64 {
     destination
 }
 
-pub fn day05(input: Vec<String>) -> (String, String) {
-    let mut seeds = Vec::new();
-    let mut seed_to_soil = Vec::new();
-    let mut soil_to_fertilizer = Vec::new();
-    let mut fertilizer_to_water = Vec::new();
-    let mut water_to_light = Vec::new();
-    let mut light_to_temperature = Vec::new();
-    let mut temperature_to_humidity = Vec::new();
-    let mut humidity_to_location = Vec::new();
+#[derive(Default)]
+pub struct Data {
+    seeds: Vec<u64>,
+    seed_to_soil: Vec<Mapping>,
+    soil_to_fertilizer: Vec<Mapping>,
+    fertilizer_to_water: Vec<Mapping>,
+    water_to_light: Vec<Mapping>,
+    light_to_temperature: Vec<Mapping>,
+    temperature_to_humidity: Vec<Mapping>,
+    humidity_to_location: Vec<Mapping>,
+}
 
-    let mut state = State::new();
-    for line in input {
+#[aoc_generator(day5)]
+pub fn input_generator(input: &str) -> Data {
+    let mut res = Data::default();
+    let mut state: State = State::new();
+
+    for line in input
+        .trim()
+        .lines()
+        .map(|l| l.trim())
+    {
         // Transition to next state
         if line.is_empty() {
             state = state.next();
@@ -141,16 +151,16 @@ pub fn day05(input: Vec<String>) -> (String, String) {
         // Find which map should be filled
         let mapping_to_fill = match state {
             State::Seeds => {
-                seeds = data.clone();
+                res.seeds = data.clone();
                 None
             }
-            State::SeedToSoil => Some(&mut seed_to_soil),
-            State::SoilToFertilizer => Some(&mut soil_to_fertilizer),
-            State::FertilizerToWater => Some(&mut fertilizer_to_water),
-            State::WaterToLight => Some(&mut water_to_light),
-            State::LightToTemperature => Some(&mut light_to_temperature),
-            State::TemperatureToHumidity => Some(&mut temperature_to_humidity),
-            State::HumidityToLocation => Some(&mut humidity_to_location),
+            State::SeedToSoil => Some(&mut res.seed_to_soil),
+            State::SoilToFertilizer => Some(&mut res.soil_to_fertilizer),
+            State::FertilizerToWater => Some(&mut res.fertilizer_to_water),
+            State::WaterToLight => Some(&mut res.water_to_light),
+            State::LightToTemperature => Some(&mut res.light_to_temperature),
+            State::TemperatureToHumidity => Some(&mut res.temperature_to_humidity),
+            State::HumidityToLocation => Some(&mut res.humidity_to_location),
         };
 
         // Fill the map
@@ -159,24 +169,31 @@ pub fn day05(input: Vec<String>) -> (String, String) {
         }
     }
 
-    // Part 1
+    res
+}
+
+#[aoc(day5, part1)]
+pub fn part1(input: &Data) -> u64 {
     let mut part_1_min_location = u64::MAX;
-    for seed in seeds.clone() {
-        let soil = get_destination(seed, &seed_to_soil);
-        let fertilizer = get_destination(soil, &soil_to_fertilizer);
-        let water = get_destination(fertilizer, &fertilizer_to_water);
-        let light = get_destination(water, &water_to_light);
-        let temperature = get_destination(light, &light_to_temperature);
-        let humidity = get_destination(temperature, &temperature_to_humidity);
-        let location = get_destination(humidity, &humidity_to_location);
+    for seed in input.seeds.clone() {
+        let soil = get_destination(seed, &input.seed_to_soil);
+        let fertilizer = get_destination(soil, &input.soil_to_fertilizer);
+        let water = get_destination(fertilizer, &input.fertilizer_to_water);
+        let light = get_destination(water, &input.water_to_light);
+        let temperature = get_destination(light, &input.light_to_temperature);
+        let humidity = get_destination(temperature, &input.temperature_to_humidity);
+        let location = get_destination(humidity, &input.humidity_to_location);
         part_1_min_location = cmp::min(part_1_min_location, location);
     }
+    part_1_min_location
+}
 
-    // Part 2
+#[aoc(day5, part2)]
+pub fn part2(input: &Data) -> u64 {
     // Given the now vast range of input seeds it's much quicker to perform the search in reverse, checking locations
     // from 0..u64::MAX until a matching seed is found.
     let mut seed_ranges = Vec::new();
-    let mut iter = seeds.iter();
+    let mut iter = input.seeds.iter();
     let mut seed = iter.next();
     let mut range = iter.next();
 
@@ -189,22 +206,22 @@ pub fn day05(input: Vec<String>) -> (String, String) {
 
     // Work backwards from location to find the first seed which lies within one of the ranges
     for location in 0..u64::MAX {
-        let humidity = get_source(location, &humidity_to_location);
-        let temperature = get_source(humidity, &temperature_to_humidity);
-        let light = get_source(temperature, &light_to_temperature);
-        let water = get_source(light, &water_to_light);
-        let fertilizer = get_source(water, &fertilizer_to_water);
-        let soil = get_source(fertilizer, &soil_to_fertilizer);
-        let seed = get_source(soil, &seed_to_soil);
+        let humidity = get_source(location, &input.humidity_to_location);
+        let temperature = get_source(humidity, &input.temperature_to_humidity);
+        let light = get_source(temperature, &input.light_to_temperature);
+        let water = get_source(light, &input.water_to_light);
+        let fertilizer = get_source(water, &input.fertilizer_to_water);
+        let soil = get_source(fertilizer, &input.soil_to_fertilizer);
+        let seed = get_source(soil, &input.seed_to_soil);
         for seed_range in &seed_ranges {
             if seed_range.contains(seed) {
-                return (format!("{}", part_1_min_location), format!("{}", location));
+                return location;
             }
         }
     }
 
     // Shouldn't reach
-    (format!("{}", part_1_min_location), format!("{}", u64::MAX))
+    u64::MAX
 }
 
 #[cfg(test)]
@@ -264,7 +281,7 @@ mod tests {
 
     #[test]
     fn example() {
-        let result = day05(parser::test_input(
+        let input = input_generator(
             "seeds: 79 14 55 13
             
             seed-to-soil map:
@@ -298,16 +315,15 @@ mod tests {
             humidity-to-location map:
             60 56 37
             56 93 4",
-        ));
-        assert_eq!(result.0, "35");
-        assert_eq!(result.1, "46");
+        );
+        assert_eq!(part1(&input), 35);
+        assert_eq!(part2(&input), 46);
     }
 
     #[test]
     fn mainline() {
-        let input = parser::load_input(5);
-        let result = day05(input);
-        assert_eq!(result.0, "462648396");
-        assert_eq!(result.1, "2520479");
+        let input = input_generator(&parser::load_input_string(5));
+        assert_eq!(part1(&input), 462648396);
+        assert_eq!(part2(&input), 2520479);
     }
 }

@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::{collections::HashMap, i32};
 
 type Point = (i32, i32);
 
@@ -92,24 +92,49 @@ fn shoelace(outline: &[Point]) -> usize {
     (sum.abs() / 2) as usize
 }
 
-pub fn day10(input: Vec<String>) -> (String, String) {
-    let mut points = HashMap::new();
-    let mut start: Option<Point> = None;
-    for (row, line) in input.iter().enumerate() {
+type Points = HashMap<(i32, i32), Pipe>;
+
+#[derive(Default)]
+pub struct Map {
+    points: Points,
+    start: Option<Point>,
+}
+
+#[aoc_generator(day10)]
+pub fn input_generator(input: &str) -> Map {
+    let mut map = Map::default();
+
+    for (row, line) in input.lines().enumerate() {
         for (col, c) in line.chars().enumerate() {
             let point = Pipe::new(c);
             if point.route == Route::Start {
-                start = Some((row as i32, col as i32));
+                map.start = Some((row as i32, col as i32));
             }
-            points.insert((row as i32, col as i32), point);
+            map.points.insert((row as i32, col as i32), point);
         }
     }
 
+    map
+}
+
+#[aoc(day10, part1)]
+pub fn part1(map: &Map) -> i32 {
+    solve(map).0
+}
+
+#[aoc(day10, part2)]
+pub fn part2(map: &Map) -> usize {
+    solve(map).1
+}
+
+fn solve(map: &Map) -> (i32, usize) {
     // Find a valid route from the start
+    let start = map.start.expect("No starting coord");
     let mut heading = Heading::North;
+
     for h in [Heading::North, Heading::East, Heading::South, Heading::West] {
-        let next_loc = h.from(start.expect("No starting coord"));
-        if let Some(point) = points.get(&next_loc) {
+        let next_loc = h.from(start);
+        if let Some(point) = map.points.get(&next_loc) {
             if point.get_heading(&h).is_some() {
                 heading = h;
                 break;
@@ -118,13 +143,13 @@ pub fn day10(input: Vec<String>) -> (String, String) {
     }
 
     let mut steps = 1;
-    let mut loc = heading.from(start.unwrap());
-    let mut point = points.get(&loc).expect("No point at location");
-    let mut outline = Vec::from([start.unwrap(), loc]);
+    let mut loc = heading.from(map.start.unwrap());
+    let mut point = map.points.get(&loc).expect("No point at location");
+    let mut outline = Vec::from([start, loc]);
     while point.route != Route::Start {
         heading = point.get_heading(&heading).expect("Heading not valid");
         loc = heading.from(loc);
-        point = points.get(&loc).expect("No point at location");
+        point = map.points.get(&loc).expect("No point at location");
         steps += 1;
         outline.push(loc);
     }
@@ -132,7 +157,7 @@ pub fn day10(input: Vec<String>) -> (String, String) {
     // Pick's Theorem (https://en.wikipedia.org/wiki/Pick%27s_theorem)
     let interior_points = area - (outline.len() - 1) / 2 + 1;
 
-    (format!("{}", steps / 2), format!("{}", interior_points))
+    (steps / 2, interior_points)
 }
 
 #[cfg(test)]
@@ -149,8 +174,8 @@ mod tests {
         -L-J|
         L|-JF
         ",
-        "4",
-        "1"
+        4,
+        1
         ;"1"
     )]
     #[test_case(
@@ -161,8 +186,8 @@ mod tests {
         |F--J
         LJ.LJ
         ",
-        "8",
-        "1"
+        8,
+        1
         ;"2"
     )]
     #[test_case(
@@ -177,8 +202,8 @@ mod tests {
         .L--J.L--J.
         ...........
         ",
-        "23",
-        "4"
+        23,
+        4
         ;"3"
     )]
     #[test_case(
@@ -194,21 +219,22 @@ mod tests {
         L.L7LFJ|||||FJL7||LJ
         L7JLJL-JLJLJL--JLJ.L
         ",
-        "80",
-        "10"
+        80,
+        10
         ;"4"
     )]
-    fn example_both(input: &str, part_1: &str, part_2: &str) {
-        let result_1 = day10(parser::test_input(input));
-        assert_eq!(result_1.0, part_1);
-        assert_eq!(result_1.1, part_2);
+    fn example_both(input: &str, part_1: i32, part_2: usize) {
+        let input = input_generator(input);
+        let result = solve(&input);
+        assert_eq!(result.0, part_1);
+        assert_eq!(result.1, part_2);
     }
 
     #[test]
     fn mainline() {
-        let input = parser::load_input(10);
-        let result = day10(input);
-        assert_eq!(result.0, "6927");
-        assert_eq!(result.1, "467");
+        let input = input_generator(&parser::load_input_string(10));
+        let result = solve(&input);
+        assert_eq!(result.0, 6927);
+        assert_eq!(result.1, 467);
     }
 }

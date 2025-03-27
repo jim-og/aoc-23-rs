@@ -1,3 +1,5 @@
+use crate::parser;
+
 struct Race {
     time: u64,
     record: u64,
@@ -49,7 +51,13 @@ fn parse_input_part_2(index: usize, input: &[String]) -> u64 {
         .expect("Failed to parse values")
 }
 
-pub fn day06(input: Vec<String>) -> (String, String) {
+#[aoc_generator(day6)]
+pub fn input_generator(input: &str) -> Vec<String> {
+    parser::test_input(input)
+}
+
+#[aoc(day6, part1)]
+pub fn part1(input: &Vec<String>) -> u64 {
     let times = parse_input_part_1(0, &input);
     let records = parse_input_part_1(1, &input);
     let mut races = Vec::new();
@@ -64,15 +72,14 @@ pub fn day06(input: Vec<String>) -> (String, String) {
     for race in &races {
         part_1.push(race.ways_to_win());
     }
+    part_1.iter().product::<u64>()
+}
 
+#[aoc(day6, part2)]
+pub fn part2(input: &Vec<String>) -> u64 {
     let time = parse_input_part_2(0, &input);
     let record = parse_input_part_2(1, &input);
-    let part_2 = Race { time, record }.ways_to_win();
-
-    (
-        format!("{}", part_1.iter().product::<u64>()),
-        format!("{}", part_2),
-    )
+    Race { time, record }.ways_to_win()
 }
 
 #[cfg(test)]
@@ -82,19 +89,18 @@ mod tests {
 
     #[test]
     fn example() {
-        let result = day06(parser::test_input(
+        let input = input_generator(
             "Time:      7  15   30
             Distance:  9  40  200",
-        ));
-        assert_eq!(result.0, "288");
-        assert_eq!(result.1, "71503");
+        );
+        assert_eq!(part1(&input), 288);
+        assert_eq!(part2(&input), 71503);
     }
 
     #[test]
     fn mainline() {
-        let input = parser::load_input(6);
-        let result = day06(input);
-        assert_eq!(result.0, "781200");
-        assert_eq!(result.1, "49240091");
+        let input = input_generator(&parser::load_input_string(6));
+        assert_eq!(part1(&input), 781200);
+        assert_eq!(part2(&input), 49240091);
     }
 }

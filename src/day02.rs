@@ -1,13 +1,17 @@
 use std::collections::HashMap;
 
-struct Game {
+use crate::parser;
+
+pub struct Game {
     id: usize,
     red: usize,
     green: usize,
     blue: usize,
 }
 
-pub fn day02(input: Vec<String>) -> (String, String) {
+#[aoc_generator(day2)]
+pub fn input_generator(input: &str) -> Vec<Game> {
+    let input = parser::test_input(input);
     let mut games = Vec::new();
 
     for (index, game) in input.iter().enumerate() {
@@ -37,20 +41,27 @@ pub fn day02(input: Vec<String>) -> (String, String) {
             blue: *required_colours.get("blue").unwrap(),
         });
     }
+    games
+}
 
+#[aoc(day2, part1)]
+pub fn part1(games: &Vec<Game>) -> usize {
     let mut sum = 0;
-    for game in &games {
+    for game in games {
         if game.red <= 12 && game.green <= 13 && game.blue <= 14 {
             sum += game.id;
         }
     }
+    sum
+}
 
+#[aoc(day2, part2)]
+pub fn part2(games: &Vec<Game>) -> usize {
     let mut power = 0;
     for game in games {
         power += game.red * game.green * game.blue;
     }
-
-    (format!("{}", sum), format!("{}", power))
+    power
 }
 
 #[cfg(test)]
@@ -58,25 +69,28 @@ mod tests {
     use super::*;
     use crate::parser;
 
-    #[test]
-    fn example() {
-        let result = day02(parser::test_input(
-            "
+    const TEST: &str = "
             Game 1: 3 blue, 4 red; 1 red, 2 green, 6 blue; 2 green
             Game 2: 1 blue, 2 green; 3 green, 4 blue, 1 red; 1 green, 1 blue
             Game 3: 8 green, 6 blue, 20 red; 5 blue, 4 red, 13 green; 5 green, 1 red
             Game 4: 1 green, 3 red, 6 blue; 3 green, 6 red; 3 green, 15 blue, 14 red
-            Game 5: 6 red, 1 blue, 3 green; 2 blue, 1 red, 2 green",
-        ));
-        assert_eq!(result.0, "8");
-        assert_eq!(result.1, "2286");
+            Game 5: 6 red, 1 blue, 3 green; 2 blue, 1 red, 2 green";
+
+    #[test]
+    fn part1_test() {
+        assert_eq!(part1(&input_generator(TEST)), 8);
+    }
+
+    #[test]
+    fn part2_test() {
+        assert_eq!(part2(&input_generator(TEST)), 2286);
     }
 
     #[test]
     fn mainline() {
-        let input = parser::load_input(2);
-        let result = day02(input);
-        assert_eq!(result.0, "2278");
-        assert_eq!(result.1, "67953");
+        let input = parser::load_input_string(2);
+        let games = input_generator(&input);
+        assert_eq!(part1(&games), 2278);
+        assert_eq!(part2(&games), 67953);
     }
 }

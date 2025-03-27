@@ -104,10 +104,11 @@ impl Mirror for Pattern {
     }
 }
 
-fn get_patterns(input: &[String]) -> Vec<Vec<Vec<char>>> {
+fn get_patterns(input: &str) -> Vec<Pattern> {
     let mut patterns = Vec::new();
     let mut pattern = Vec::new();
-    for line in input {
+
+    for line in input.trim().lines().map(|l| l.trim()) {
         if line.is_empty() {
             patterns.push(pattern.clone());
             pattern.clear();
@@ -129,7 +130,13 @@ where
         .collect()
 }
 
-fn part_1(patterns: &[Vec<Vec<char>>]) -> usize {
+#[aoc_generator(day13)]
+pub fn input_generator(input: &str) -> Vec<Pattern> {
+    get_patterns(input)
+}
+
+#[aoc(day13, part1)]
+fn part1(patterns: &Vec<Pattern>) -> usize {
     let scores = patterns
         .iter()
         .map(
@@ -144,7 +151,8 @@ fn part_1(patterns: &[Vec<Vec<char>>]) -> usize {
     scores.iter().sum::<usize>()
 }
 
-fn part_2(patterns: &[Vec<Vec<char>>]) -> usize {
+#[aoc(day13, part2)]
+fn part2(patterns: &Vec<Pattern>) -> usize {
     let scores = patterns
         .iter()
         .map(
@@ -159,12 +167,6 @@ fn part_2(patterns: &[Vec<Vec<char>>]) -> usize {
     scores.iter().sum::<usize>()
 }
 
-pub fn day13(input: Vec<String>) -> (String, String) {
-    let patterns = get_patterns(&input);
-    let part_1 = part_1(&patterns);
-    let part_2 = part_2(&patterns);
-    (format!("{}", part_1), format!("{}", part_2))
-}
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -189,22 +191,20 @@ mod tests {
         ..##..###
         #....#..#
         ",
-        "405",
-        "400"
+        405,
+        400
         ;"1"
     )]
-    fn example(input: &str, part_1: &str, part_2: &str) {
-        let data = parser::test_input(input);
-        let result = day13(data);
-        assert_eq!(result.0, part_1);
-        assert_eq!(result.1, part_2);
+    fn example(input: &str, p1: usize, p2: usize) {
+        let patterns = &input_generator(input);
+        assert_eq!(part1(patterns), p1);
+        assert_eq!(part2(patterns), p2);
     }
 
     #[test]
     fn mainline() {
-        let input = parser::load_input(13);
-        let result = day13(input);
-        assert_eq!(result.0, "33975");
-        assert_eq!(result.1, "29083");
+        let patterns = &input_generator(&parser::load_input_string(13));
+        assert_eq!(part1(patterns), 33975);
+        assert_eq!(part2(patterns), 29083);
     }
 }
