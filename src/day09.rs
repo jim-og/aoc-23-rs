@@ -11,18 +11,19 @@ pub fn input_generator(input: &str) -> Vec<Vec<i32>> {
 }
 
 #[aoc(day9, part1)]
-pub fn part1(input: &Vec<Vec<i32>>) -> i32 {
+pub fn part1(input: &[Vec<i32>]) -> i32 {
     input.iter().map(extrapolate).sum()
 }
 
 #[aoc(day9, part2)]
-pub fn part2(input: &Vec<Vec<i32>>) -> i32 {
+pub fn part2(input: &[Vec<i32>]) -> i32 {
     input
         .iter()
         .map(|history| extrapolate(&history.iter().rev().cloned().collect()))
         .sum()
 }
 
+#[allow(clippy::ptr_arg)]
 fn extrapolate(history: &Vec<i32>) -> i32 {
     let diffs = history
         .windows(2)
