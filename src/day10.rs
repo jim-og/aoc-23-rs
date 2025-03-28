@@ -176,7 +176,7 @@ mod tests {
         ",
         4,
         1
-        ;"1"
+        ;"e1"
     )]
     #[test_case(
         "
@@ -188,7 +188,7 @@ mod tests {
         ",
         8,
         1
-        ;"2"
+        ;"e2"
     )]
     #[test_case(
         "
@@ -204,7 +204,7 @@ mod tests {
         ",
         23,
         4
-        ;"3"
+        ;"e3"
     )]
     #[test_case(
         "
@@ -221,9 +221,9 @@ mod tests {
         ",
         80,
         10
-        ;"4"
+        ;"e4"
     )]
-    fn example_both(input: &str, part_1: i32, part_2: usize) {
+    fn both_test(input: &str, part_1: i32, part_2: usize) {
         let input = input_generator(input);
         let result = solve(&input);
         assert_eq!(result.0, part_1);

@@ -94,9 +94,9 @@ mod tests {
         374,
         1030,
         8410
-        ;"1"
+        ;"e1"
     )]
-    fn example(input: &str, answer_1: usize, answer_2: usize, answer_3: usize) {
+    fn both_test(input: &str, answer_1: usize, answer_2: usize, answer_3: usize) {
         let data = input_generator(input);
         assert_eq!(solve(&data, 2), answer_1);
         assert_eq!(solve(&data, 10), answer_2);

@@ -276,7 +276,7 @@ mod tests {
     }
 
     #[test]
-    fn example() {
+    fn both_test() {
         let input = input_generator(
             "seeds: 79 14 55 13
             

@@ -193,9 +193,9 @@ mod tests {
         ",
         405,
         400
-        ;"1"
+        ;"e1"
     )]
-    fn example(input: &str, p1: usize, p2: usize) {
+    fn both_test(input: &str, p1: usize, p2: usize) {
         let patterns = &input_generator(input);
         assert_eq!(part1(patterns), p1);
         assert_eq!(part2(patterns), p2);

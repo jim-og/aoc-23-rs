@@ -88,7 +88,7 @@ mod tests {
     use crate::parser;
 
     #[test]
-    fn example() {
+    fn both_test() {
         let input = input_generator(
             "Time:      7  15   30
             Distance:  9  40  200",

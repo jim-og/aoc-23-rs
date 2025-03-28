@@ -103,7 +103,7 @@ mod tests {
     use crate::parser;
 
     #[test]
-    fn example() {
+    fn both_test() {
         let result = solve(&input_generator(
             "467..114..
             ...*......

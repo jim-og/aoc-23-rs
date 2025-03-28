@@ -43,7 +43,7 @@ mod tests {
     use crate::parser;
 
     #[test]
-    fn example() {
+    fn both_test() {
         let input = input_generator(
             "0 3 6 9 12 15
             1 3 6 10 15 21

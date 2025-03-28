@@ -75,7 +75,7 @@ mod tests {
     use crate::parser;
 
     #[test]
-    fn part_1() {
+    fn part1_test() {
         assert_eq!(
             part1(&vec![
                 "1abc2".to_string(),
@@ -88,7 +88,7 @@ mod tests {
     }
 
     #[test]
-    fn example_2() {
+    fn part2_test() {
         assert_eq!(
             part2(&parser::test_input(
                 "nqninenmvnpsz874

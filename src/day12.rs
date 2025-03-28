@@ -125,7 +125,7 @@ mod tests {
     use crate::parser;
 
     #[test]
-    fn example() {
+    fn both_test() {
         let input = input_generator(
             "???.### 1,1,3
             .??..??...?##. 1,1,3

@@ -144,7 +144,7 @@ mod tests {
         ZZZ = (ZZZ, ZZZ)
         ",
         2
-        ;"1"
+        ;"e1"
     )]
     #[test_case(
         "
@@ -155,14 +155,14 @@ mod tests {
         ZZZ = (ZZZ, ZZZ)
         ",
         6
-        ;"2"
+        ;"e2"
     )]
-    fn example_part_1(input: &str, answer: usize) {
+    fn part1_test(input: &str, answer: usize) {
         assert_eq!(part1(&input_generator(input)), answer);
     }
 
     #[test]
-    fn example_part_2() {
+    fn part2_test() {
         let input = input_generator(
             "LR
           

@@ -160,7 +160,7 @@ mod tests {
     use crate::parser;
 
     #[test]
-    fn example() {
+    fn both_test() {
         let input = input_generator(
             "32T3K 765
             T55J5 684
