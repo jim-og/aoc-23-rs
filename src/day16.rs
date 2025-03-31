@@ -46,7 +46,8 @@ impl Tile {
             '-' => Route::EastAndWest,
             '\\' => Route::Backslash,
             '/' => Route::Forwardslash,
-            _ => Route::Empty,
+            '.' => Route::Empty,
+            _ => panic!("Unrecognised tile route: {}", symbol),
         };
         Self {
             route,
@@ -94,8 +95,7 @@ impl Tile {
 
 struct Parser {
     layout: Layout,
-    rows: i32,
-    cols: i32,
+    max: Point,
 }
 
 type Layout = HashMap<(i32, i32), Tile>;
@@ -113,23 +113,17 @@ impl Energized for Layout {
 #[aoc_generator(day16)]
 fn parse(input: &str) -> Parser {
     let mut layout = Layout::new();
-    let rows = input.trim().lines().count();
-    // TODO
-    let mut cols = 0;
 
     for (row, line) in input.trim().lines().enumerate() {
         for (col, c) in line.trim().chars().enumerate() {
             let tile = Tile::new(c);
             layout.insert((row as i32, col as i32), tile);
         }
-        cols = line.trim().chars().count();
     }
 
-    Parser {
-        layout,
-        rows: rows as i32,
-        cols: cols as i32,
-    }
+    let max = layout.keys().cloned().max().unwrap_or((0, 0));
+
+    Parser { layout, max }
 }
 
 fn dfs(layout: &mut Layout, point: Point, heading: Heading) {
@@ -152,25 +146,28 @@ fn part1(input: &Parser) -> usize {
 
 #[aoc(day16, part2)]
 fn part2(input: &Parser) -> usize {
+    let candidates: Vec<(Point, Heading)> = (0..input.max.1)
+        .flat_map(|col| {
+            vec![
+                ((0, col), Heading::South),
+                ((input.max.0, col), Heading::North),
+            ]
+        })
+        .chain((0..input.max.0).flat_map(|row| {
+            vec![
+                ((row, 0), Heading::East),
+                ((row, input.max.1), Heading::West),
+            ]
+        }))
+        .collect();
+
     let mut result = 0;
 
-    // Along the top and bottom
-    for (row, heading) in [(0, Heading::South), (input.rows - 1, Heading::North)] {
-        for col in 0..input.cols {
-            let mut layout = input.layout.clone();
-            dfs(&mut layout, (row, col), heading.clone());
-            result = max(result, layout.energized_count());
-        }
-    }
-
-    // Along the left and right
-    for (col, heading) in [(0, Heading::East), (input.cols - 1, Heading::West)] {
-        for row in 0..input.rows {
-            let mut layout = input.layout.clone();
-            dfs(&mut layout, (row, col), heading.clone());
-            result = max(result, layout.energized_count());
-        }
-    }
+    candidates.iter().for_each(|(point, heading)| {
+        let mut layout = input.layout.clone();
+        dfs(&mut layout, *point, heading.clone());
+        result = max(result, layout.energized_count());
+    });
 
     result
 }
