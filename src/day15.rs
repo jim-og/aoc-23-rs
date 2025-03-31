@@ -29,7 +29,7 @@ impl Parser {
         let mut boxes: Vec<Vec<Lens>> = vec![vec![]; 256];
 
         for (label, operation) in &self.init_seq {
-            let box_val = hash(&label);
+            let box_val = hash(label);
             let bx = boxes
                 .get_mut(box_val)
                 .expect("Expected a box at this index");
@@ -74,9 +74,8 @@ impl LensBox for Vec<Vec<Lens>> {
 }
 
 fn initializer(step: &str) -> Option<(String, Operation)> {
-    if step.ends_with('-') {
-        let label = step[..step.len() - 1].to_string();
-        Some((label, Operation::Remove))
+    if let Some(label) = step.strip_suffix('-') {
+        Some((label.to_string(), Operation::Remove))
     } else if let Some((label, focal_len)) = step.split_once('=') {
         Some((
             label.to_string(),
@@ -87,8 +86,8 @@ fn initializer(step: &str) -> Option<(String, Operation)> {
             ),
         ))
     } else {
-        // Part 1 has examples where there is no '=' or '-'.
-        // Return None and discard .
+        // Steps which are valid for Part 1 may not be valid for Part 2.
+        // Return None so they can be discarded for Part 2.
         None
     }
 }
@@ -97,11 +96,7 @@ fn initializer(step: &str) -> Option<(String, Operation)> {
 fn parse(input: &str) -> Parser {
     Parser {
         steps: input.trim().split(',').map(|s| s.to_string()).collect(),
-        init_seq: input
-            .trim()
-            .split(',')
-            .filter_map(|step| initializer(step))
-            .collect(),
+        init_seq: input.trim().split(',').filter_map(initializer).collect(),
     }
 }
 

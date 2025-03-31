@@ -106,11 +106,11 @@ pub fn input_generator(input: &str) -> Map {
 
     for (row, line) in input.lines().enumerate() {
         for (col, c) in line.chars().enumerate() {
-            let point = Pipe::new(c);
-            if point.route == Route::Start {
+            let pipe = Pipe::new(c);
+            if pipe.route == Route::Start {
                 map.start = Some((row as i32, col as i32));
             }
-            map.points.insert((row as i32, col as i32), point);
+            map.points.insert((row as i32, col as i32), pipe);
         }
     }
 
@@ -144,12 +144,12 @@ fn solve(map: &Map) -> (i32, usize) {
 
     let mut steps = 1;
     let mut loc = heading.from(map.start.unwrap());
-    let mut point = map.points.get(&loc).expect("No point at location");
+    let mut pipe = map.points.get(&loc).expect("No pipe at location");
     let mut outline = Vec::from([start, loc]);
-    while point.route != Route::Start {
-        heading = point.get_heading(&heading).expect("Heading not valid");
+    while pipe.route != Route::Start {
+        heading = pipe.get_heading(&heading).expect("Heading not valid");
         loc = heading.from(loc);
-        point = map.points.get(&loc).expect("No point at location");
+        pipe = map.points.get(&loc).expect("No point at location");
         steps += 1;
         outline.push(loc);
     }
