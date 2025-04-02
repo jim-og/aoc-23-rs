@@ -65,10 +65,8 @@ impl Lagoon for Vec<Instruction> {
             perimeter += distance;
         }
 
-        let area = vertices.area();
-
         // Pick's Theorem (https://en.wikipedia.org/wiki/Pick%27s_theorem)
-        let interior_points = area - (perimeter as usize - 1) / 2 + 1;
+        let interior_points = vertices.area() - (perimeter as usize - 1) / 2 + 1;
 
         interior_points + perimeter as usize - 1
     }
@@ -157,6 +155,9 @@ mod tests {
     #[test]
     fn mainline() {
         assert_eq!(part1(&parse(&parser::load_input_string(18))), 67891);
-        assert_eq!(part2(&parse(&parser::load_input_string(18))), 67891);
+        assert_eq!(
+            part2(&parse(&parser::load_input_string(18))),
+            94116351948493
+        );
     }
 }
