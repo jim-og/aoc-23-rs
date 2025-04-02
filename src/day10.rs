@@ -81,9 +81,9 @@ impl Pipe {
     }
 }
 
-/// Shoelace Formula (https://en.wikipedia.org/wiki/Shoelace_formula)
+/// Shoelace Formula (https://en.wikipedia.org/wiki/Shoelace_formula).
 /// The starting point must be present at the start and the end of the outline
-fn shoelace(outline: &[Point]) -> usize {
+pub fn shoelace(outline: &[Point]) -> usize {
     let sum = outline.windows(2).fold(0, |acc, matrix| {
         acc + (matrix[0].0 * matrix[1].1) - (matrix[1].0 * matrix[0].1)
     });
@@ -153,7 +153,7 @@ fn solve(map: &Map) -> (i32, usize) {
         steps += 1;
         outline.push(loc);
     }
-    let area: usize = shoelace(&outline);
+    let area = shoelace(&outline);
     // Pick's Theorem (https://en.wikipedia.org/wiki/Pick%27s_theorem)
     let interior_points = area - (outline.len() - 1) / 2 + 1;
 
