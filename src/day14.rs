@@ -1,147 +1,209 @@
-use std::fmt;
+use std::{
+    collections::{HashMap, VecDeque},
+    fmt,
+};
 
-#[derive(Debug, Clone, Copy, PartialEq)]
+type Point = (usize, usize);
+
+#[derive(Clone, PartialEq)]
 enum Rock {
     Empty,
     Round,
     Cube,
 }
 
-impl fmt::Display for Rock {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        match self {
-            Rock::Empty => write!(f, "."),
-            Rock::Round => write!(f, "O"),
-            Rock::Cube => write!(f, "#"),
-        }
-    }
-}
-
-enum Tilt {
-    North,
-    East,
-    South,
-    West,
-}
-
+#[derive(Clone, PartialEq)]
 struct Platform {
-    rocks: Vec<Vec<Rock>>,
+    layout: HashMap<Point, Rock>,
+    width: usize,
+    height: usize,
 }
 
 impl Platform {
-    fn new(input: Vec<String>) -> Self {
-        let mut rocks = Vec::new();
-        input.iter().for_each(|line| {
-            rocks.push(
-                line.chars()
-                    .map(|c| match c {
-                        'O' => Rock::Round,
-                        '#' => Rock::Cube,
-                        _ => Rock::Empty,
-                    })
-                    .collect::<Vec<_>>(),
-            );
-        });
-        Self { rocks }
-    }
+    fn tilt(mut self) -> Self {
+        for col in 0..self.width {
+            let mut empty_spaces = VecDeque::new();
 
-    fn tilt(mut self, direction: Tilt) {
-        match direction {
-            Tilt::North => {
-                let width = self.rocks.first().unwrap().len();
-                let height = self.rocks.len();
-
-                // Iterate through the platform from top left to bottom right
-                for i in 1..height {
-                    for j in 0..width {
-                        if self.rocks[i][j] == Rock::Round {
-                            // Look up along this column to find the next rock which is hit
-                            let mut moved = false;
-
-                            for offset in 1..i {
-                                if self.rocks[i - offset][j] != Rock::Empty {
-                                    // We've hit something. Move the rock to the position before this.
-                                    self.rocks[i - offset][j] = Rock::Round;
-                                    self.rocks[i][j] = Rock::Empty;
-                                    moved = true;
-                                    self.print();
-                                    // TODO refactor to a fn we can return from
-                                    break;
-                                }
-                            }
-
-                            // If no rock was found then it must hit the boundary
-                            if !moved {
-                                self.rocks[0][j] = Rock::Round;
-                                self.rocks[i][j] = Rock::Empty;
-                            }
+            for row in 0..self.height {
+                match self.layout[&(row, col)] {
+                    Rock::Empty => empty_spaces.push_back((row, col)),
+                    Rock::Round => {
+                        if let Some(space) = empty_spaces.pop_front() {
+                            self.layout.insert(space, Rock::Round);
+                            self.layout.insert((row, col), Rock::Empty);
+                            empty_spaces.push_back((row, col));
                         }
+                    }
+                    Rock::Cube => {
+                        empty_spaces.clear();
                     }
                 }
             }
-            Tilt::East => todo!(),
-            Tilt::South => todo!(),
-            Tilt::West => todo!(),
         }
-        todo!()
+        self
     }
 
-    fn print(&self) {
-        self.rocks
-            .iter()
-            .map(|rocks| {
-                rocks
-                    .iter()
-                    .map(|rock| rock.to_string())
-                    .collect::<String>()
+    fn rotate_clockwise(mut self) -> Self {
+        let mut clockwise = HashMap::new();
+
+        for row in 0..self.height {
+            for col in 0..self.width {
+                clockwise.insert(
+                    (col, self.height - row - 1),
+                    self.layout[&(row, col)].clone(),
+                );
+            }
+        }
+        self.layout = clockwise;
+        self
+    }
+
+    fn cycle(self) -> Self {
+        self.tilt()
+            .rotate_clockwise()
+            .tilt()
+            .rotate_clockwise()
+            .tilt()
+            .rotate_clockwise()
+            .tilt()
+            .rotate_clockwise()
+    }
+
+    fn cycles(self, n: usize) -> Self {
+        (0..n).fold(self, |acc, _| acc.cycle())
+    }
+
+    // Brent's cycle detection algorithm
+    // "https://en.wikipedia.org/wiki/Cycle_detection#Brent's_algorithm"
+    fn brent_cycles(self, n: usize) -> Self {
+        let mut power = 1;
+        let mut lambda = 1;
+        let mut tortoise = self.clone();
+        let mut hare = self.clone().cycle();
+
+        // This assumes there is a cycle; otherwise this loop won't terminate
+        while tortoise != hare {
+            if power == lambda {
+                tortoise = hare.clone();
+                power *= 2;
+                lambda = 0;
+            }
+            hare = hare.cycle();
+            lambda += 1;
+        }
+
+        // Find the position of the first repetition of length lamda
+        tortoise = self.clone();
+        hare = self.clone().cycles(lambda);
+
+        // The distance between the hare and tortoise is now lamda
+        // Next, the hare and tortoise move at the same speed until they agree
+        let mut mu = 0;
+        while tortoise != hare {
+            tortoise = tortoise.cycle();
+            hare = hare.cycle();
+            mu += 1;
+        }
+
+        self.cycles(mu).cycles((n - mu) % lambda)
+    }
+
+    fn total_load(&self) -> usize {
+        let mut load = 0;
+        for row in 0..self.height {
+            for col in 0..self.width {
+                if self.layout[&(row, col)] == Rock::Round {
+                    load += self.height - row;
+                }
+            }
+        }
+        load
+    }
+}
+
+impl fmt::Display for Platform {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        for row in 0..self.height {
+            for col in 0..self.width {
+                let symbol = match self.layout[&(row, col)] {
+                    Rock::Empty => '.',
+                    Rock::Round => 'O',
+                    Rock::Cube => '#',
+                };
+                write!(f, "{}", symbol)?;
+            }
+            writeln!(f)?;
+        }
+        Ok(())
+    }
+}
+
+#[aoc_generator(day14)]
+fn parse(input: &str) -> Platform {
+    Platform {
+        layout: input
+            .trim()
+            .lines()
+            .enumerate()
+            .flat_map(|(row, line)| {
+                line.trim().chars().enumerate().map(move |(col, c)| {
+                    let rock = match c {
+                        'O' => Rock::Round,
+                        '#' => Rock::Cube,
+                        '.' => Rock::Empty,
+                        _ => panic!("Invalid rock char"),
+                    };
+                    ((row, col), rock)
+                })
             })
-            .for_each(|line| println!("{}", line));
+            .collect(),
+        width: input.trim().lines().last().unwrap().trim().len(),
+        height: input.trim().lines().count(),
     }
 }
 
-pub fn day14(input: Vec<String>) -> (String, String) {
-    let platform = Platform::new(input);
-    platform.print();
-    platform.tilt(Tilt::North);
-
-    let part_1 = 1;
-    let part_2 = 2;
-    (format!("{}", part_1), format!("{}", part_2))
+#[aoc(day14, part1)]
+fn part1(input: &Platform) -> usize {
+    input.clone().tilt().total_load()
 }
 
-// #[cfg(test)]
-// mod tests {
-//     use super::*;
-//     use crate::parser;
-//     use test_case::test_case;
+#[aoc(day14, part2)]
+fn part2(input: &Platform) -> usize {
+    input.clone().brent_cycles(1_000_000_000).total_load()
+}
 
-//     #[test_case(
-//         "
-//         O....#....
-//         O.OO#....#
-//         .....##...
-//         OO.#O....O
-//         .O.....O#.
-//         O.#..O.#.#
-//         ..O..#O..O
-//         .......O..
-//         #....###..
-//         #OO..#....
-//         ",
-//         136
-//         ;"1"
-//     )]
-//     fn example(input: &str, answer: usize) {
-//         let result = day14(parser::test_input(input));
-//         assert_eq!(result.0, "1");
-//         assert_eq!(result.1, "2");
-//     }
+#[cfg(test)]
+mod tests {
+    use crate::parser;
 
-//     #[test]
-//     fn mainline() {
-//         let input = parser::load_input(14);
-//         let result = day14(input);
-//         assert_eq!(result.0, "1");
-//         assert_eq!(result.1, "2");
-//     }
-// }
+    use super::*;
+
+    const TEST: &str = "
+        O....#....
+        O.OO#....#
+        .....##...
+        OO.#O....O
+        .O.....O#.
+        O.#..O.#.#
+        ..O..#O..O
+        .......O..
+        #....###..
+        #OO..#....
+    ";
+
+    #[test]
+    fn part1_example() {
+        assert_eq!(part1(&parse(TEST)), 136);
+    }
+
+    #[test]
+    fn part2_example() {
+        assert_eq!(part2(&parse(TEST)), 64);
+    }
+
+    #[test]
+    fn mainline() {
+        assert_eq!(part1(&parse(&parser::load_input_string(14))), 110128);
+        // assert_eq!(part2(&parse(&parser::load_input_string(14))), 103861);
+    }
+}

@@ -11,3 +11,5 @@ My solutions to 2023's [Advent of Code](https://adventofcode.com/2023).
 1. Day 11 uses [Taxicab geometry](https://en.wikipedia.org/wiki/Taxicab_geometry) to calculate the distance. This is the distance a taxicab would take between two points in a city instead of the Euclidean distance (how the crow flies).
 1. Day 12 uses top-down [Dynamic Programming](https://en.wikipedia.org/wiki/Overlapping_subproblems).
 1. Day 13 is a good example of traits and how to transpose a matrix.
+1. Day 14 uses [Brent's algorithm](https://en.wikipedia.org/wiki/Cycle_detection#Brent's_algorithm) for cycle detection. Part 2 is too slow and needs improvement; I suspect this is due to the method of rotating the platform and then tilting it which results in a lot of copying. I like the elegance of having a single tilt function but clearly it's not very efficient.
+1. Day 16 part 2 feels like it would be a candidate for dynamic programming as there a lots of overlapping sub-problems. The result of light travelling over a tile in a given direction has likely been seen before but correctly handling beams which get into loops makes it tricky.
