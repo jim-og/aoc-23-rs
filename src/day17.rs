@@ -1,5 +1,5 @@
 use std::{
-    collections::{BinaryHeap, HashMap},
+    collections::{BinaryHeap, HashMap, HashSet},
     hash::Hash,
 };
 
@@ -102,10 +102,11 @@ trait ClosedList {
     fn initialise(city: &City, start: Point, dest: Point) -> Self;
     #[allow(dead_code)]
     fn get_path(&self, last_node: Node) -> Vec<Node>;
+    #[allow(dead_code)]
+    fn get_visited(&self) -> HashSet<Point>;
 }
 
 impl ClosedList for HashMap<NodeKey, Node> {
-    // TODO does this need the city?
     fn initialise(city: &City, start: Point, dest: Point) -> Self {
         let mut closed = HashMap::new();
         for (_, dir) in city.get_neighbours(start) {
@@ -136,6 +137,10 @@ impl ClosedList for HashMap<NodeKey, Node> {
         path.push(curr_node);
         path
     }
+
+    fn get_visited(&self) -> HashSet<Point> {
+        self.keys().map(|k| k.pos).collect()
+    }
 }
 
 struct City {
@@ -161,6 +166,7 @@ impl City {
             // Destination reached
             if node.pos == dest && node.steps >= min_steps {
                 // self.print_path(closed.get_path(node));
+                // self.print_visited(closed.get_visited());
                 return Some(node.g);
             }
 
@@ -231,11 +237,7 @@ impl City {
 
     #[allow(dead_code)]
     fn print_path(&self, path: Vec<Node>) {
-        let mut grid: HashMap<Point, String> = self
-            .map
-            .iter()
-            .map(|(&point, &_val)| (point, ".".to_string()))
-            .collect();
+        let mut grid: HashMap<Point, String> = self.get_grid();
 
         for node in path {
             let symbol = match node.dir {
@@ -248,13 +250,39 @@ impl City {
             grid.insert(node.pos, symbol.to_string());
         }
 
+        self.print_grid(grid);
+    }
+
+    #[allow(dead_code)]
+    fn print_visited(&self, visited: HashSet<Point>) {
+        let mut grid: HashMap<Point, String> = self.get_grid();
+
+        for point in visited {
+            grid.insert(point, "#".to_string());
+        }
+
+        self.print_grid(grid);
+    }
+
+    fn get_grid(&self) -> HashMap<Point, String> {
+        self.map
+            .iter()
+            .map(|(&point, &_val)| (point, ".".to_string()))
+            .collect()
+    }
+
+    fn print_grid(&self, grid: HashMap<Point, String>) {
         for row in 0..=self.max.1 {
             let line: String = (0..=self.max.0)
-                .map(|col| grid.get(&(col, row)).expect("foo"))
+                .map(|col| {
+                    grid.get(&(col, row))
+                        .expect("Expected to find block in grid")
+                })
                 .cloned()
                 .collect();
             println!("{}", line);
         }
+        println!();
     }
 }
 
