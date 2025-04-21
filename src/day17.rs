@@ -100,6 +100,7 @@ impl OpenList for BinaryHeap<Node> {
 
 trait ClosedList {
     fn initialise(city: &City, start: Point, dest: Point) -> Self;
+    #[allow(dead_code)]
     fn get_path(&self, last_node: Node) -> Vec<Node>;
 }
 
@@ -143,7 +144,13 @@ struct City {
 }
 
 impl City {
-    fn a_star_search(&self, start: Point, dest: Point, max_steps: usize) -> Option<usize> {
+    fn a_star_search(
+        &self,
+        start: Point,
+        dest: Point,
+        max_steps: usize,
+        min_steps: usize,
+    ) -> Option<usize> {
         // OPEN list is a min-heap with lowest f at the top
         let mut open = BinaryHeap::initialise(self, start, dest);
 
@@ -152,8 +159,8 @@ impl City {
 
         while let Some(node) = open.pop() {
             // Destination reached
-            if node.pos == dest {
-                self.print_path(closed.get_path(node));
+            if node.pos == dest && node.steps >= min_steps {
+                // self.print_path(closed.get_path(node));
                 return Some(node.g);
             }
 
@@ -167,6 +174,11 @@ impl City {
             for (pos, dir) in self.get_neighbours(node.pos) {
                 // Skip a neighbour which would be going back on ourselves
                 if dir == node.dir.flip() {
+                    continue;
+                }
+
+                // Skip changes in direction if min steps have not been taken
+                if dir != node.dir && node.steps < min_steps {
                     continue;
                 }
 
@@ -217,11 +229,12 @@ impl City {
         neighbours
     }
 
+    #[allow(dead_code)]
     fn print_path(&self, path: Vec<Node>) {
         let mut grid: HashMap<Point, String> = self
             .map
             .iter()
-            .map(|(&point, &val)| (point, val.to_string()))
+            .map(|(&point, &_val)| (point, ".".to_string()))
             .collect();
 
         for node in path {
@@ -273,10 +286,14 @@ fn parse(input: &str) -> City {
         .lines()
         .enumerate()
         .flat_map(|(row, line)| {
-            line.trim()
-                .chars()
-                .enumerate()
-                .map(move |(col, c)| ((col, row), c.to_string().parse::<usize>().expect("foo")))
+            line.trim().chars().enumerate().map(move |(col, c)| {
+                (
+                    (col, row),
+                    c.to_string()
+                        .parse::<usize>()
+                        .expect("Error parsing block heat loss"),
+                )
+            })
         })
         .collect();
 
@@ -287,22 +304,23 @@ fn parse(input: &str) -> City {
 
 #[aoc(day17, part1)]
 fn part1(city: &City) -> usize {
-    city.a_star_search((0, 0), city.max, 3)
+    city.a_star_search((0, 0), city.max, 3, 0)
         .expect("Expected to reach the end!")
 }
 
 #[aoc(day17, part2)]
-fn part2(_input: &City) -> usize {
-    todo!()
+fn part2(city: &City) -> usize {
+    city.a_star_search((0, 0), city.max, 10, 4)
+        .expect("Expected to reach the end!")
 }
 
 #[cfg(test)]
 mod tests {
-    use crate::parser;
-
     use super::*;
+    use crate::parser;
+    use test_case::test_case;
 
-    const TEST: &str = "
+    const TEST_A: &str = "
         2413432311323
         3215453535623
         3255245654254
@@ -318,19 +336,29 @@ mod tests {
         4322674655533
     ";
 
-    #[test]
-    fn part1_example() {
-        assert_eq!(part1(&parse(TEST)), 102);
-    }
+    const TEST_B: &str = "
+        111111111111
+        999999999991
+        999999999991
+        999999999991
+        999999999991
+    ";
 
     #[test]
-    fn part2_example() {
-        assert_eq!(part2(&parse("<EXAMPLE>")), 0);
+    fn part1_example() {
+        assert_eq!(part1(&parse(TEST_A)), 102);
+    }
+
+    #[test_case(TEST_A, 94;"A")]
+    #[test_case(TEST_B, 71;"B")]
+    fn part2_example(input: &str, answer: usize) {
+        assert_eq!(part2(&parse(input)), answer);
     }
 
     #[test]
     fn mainline() {
         let input = &parse(&parser::load_input_string(17));
         assert_eq!(part1(input), 1138);
+        assert_eq!(part2(input), 1312);
     }
 }
