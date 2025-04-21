@@ -9,7 +9,7 @@ pub enum Point {
 type Schematic = HashMap<(usize, usize), Point>;
 
 #[aoc_generator(day3)]
-pub fn input_generator(input: &str) -> Schematic {
+pub fn parse(input: &str) -> Schematic {
     let mut schematic = HashMap::new();
 
     // Populate schematic
@@ -104,7 +104,7 @@ mod tests {
 
     #[test]
     fn both_test() {
-        let result = solve(&input_generator(
+        let result = solve(&parse(
             "467..114..
             ...*......
             ..35..633.
@@ -122,7 +122,7 @@ mod tests {
 
     #[test]
     fn mainline() {
-        let result = solve(&input_generator(&parser::load_input_string(3)));
+        let result = solve(&parse(&parser::load_input_string(3)));
         assert_eq!(result.0, 532331);
         assert_eq!(result.1, 82301120);
     }

@@ -105,7 +105,7 @@ pub struct Data {
 }
 
 #[aoc_generator(day5)]
-pub fn input_generator(input: &str) -> Data {
+pub fn parse(input: &str) -> Data {
     let mut res = Data::default();
     let mut state: State = State::new();
 
@@ -277,7 +277,7 @@ mod tests {
 
     #[test]
     fn both_test() {
-        let input = input_generator(
+        let input = parse(
             "seeds: 79 14 55 13
             
             seed-to-soil map:
@@ -318,7 +318,7 @@ mod tests {
 
     #[test]
     fn mainline() {
-        let input = input_generator(&parser::load_input_string(5));
+        let input = parse(&parser::load_input_string(5));
         assert_eq!(part1(&input), 462648396);
         assert_eq!(part2(&input), 2520479);
     }

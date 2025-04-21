@@ -58,7 +58,7 @@ pub fn solve(input: &[String], expansion_factor: usize) -> usize {
 }
 
 #[aoc_generator(day11)]
-pub fn input_generator(input: &str) -> Vec<String> {
+pub fn parse(input: &str) -> Vec<String> {
     parser::test_input(input)
 }
 
@@ -97,7 +97,7 @@ mod tests {
         ;"e1"
     )]
     fn both_test(input: &str, answer_1: usize, answer_2: usize, answer_3: usize) {
-        let data = input_generator(input);
+        let data = parse(input);
         assert_eq!(solve(&data, 2), answer_1);
         assert_eq!(solve(&data, 10), answer_2);
         assert_eq!(solve(&data, 100), answer_3);
@@ -105,7 +105,7 @@ mod tests {
 
     #[test]
     fn mainline() {
-        let input = input_generator(&parser::load_input_string(11));
+        let input = parse(&parser::load_input_string(11));
         assert_eq!(part1(&input), 9648398);
         assert_eq!(part2(&input), 618800410814);
     }

@@ -63,7 +63,7 @@ impl Node {
 }
 
 #[aoc_generator(day8)]
-pub fn input_generator(input: &str) -> Vec<String> {
+pub fn parse(input: &str) -> Vec<String> {
     parser::test_input(input)
 }
 
@@ -158,12 +158,12 @@ mod tests {
         ;"e2"
     )]
     fn part1_test(input: &str, answer: usize) {
-        assert_eq!(part1(&input_generator(input)), answer);
+        assert_eq!(part1(&parse(input)), answer);
     }
 
     #[test]
     fn part2_test() {
-        let input = input_generator(
+        let input = parse(
             "LR
           
             11A = (11B, XXX)
@@ -180,7 +180,7 @@ mod tests {
 
     #[test]
     fn mainline() {
-        let input = input_generator(&parser::load_input_string(8));
+        let input = parse(&parser::load_input_string(8));
         assert_eq!(part1(&input), 13771);
         assert_eq!(part2(&input), 13129439557681);
     }

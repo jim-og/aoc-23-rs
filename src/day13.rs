@@ -131,7 +131,7 @@ where
 }
 
 #[aoc_generator(day13)]
-pub fn input_generator(input: &str) -> Vec<Pattern> {
+pub fn parse(input: &str) -> Vec<Pattern> {
     get_patterns(input)
 }
 
@@ -196,14 +196,14 @@ mod tests {
         ;"e1"
     )]
     fn both_test(input: &str, p1: usize, p2: usize) {
-        let patterns = &input_generator(input);
+        let patterns = &parse(input);
         assert_eq!(part1(patterns), p1);
         assert_eq!(part2(patterns), p2);
     }
 
     #[test]
     fn mainline() {
-        let patterns = &input_generator(&parser::load_input_string(13));
+        let patterns = &parse(&parser::load_input_string(13));
         assert_eq!(part1(patterns), 33975);
         assert_eq!(part2(patterns), 29083);
     }

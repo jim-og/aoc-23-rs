@@ -1,7 +1,7 @@
 use std::collections::{HashMap, HashSet};
 
 #[aoc_generator(day4)]
-pub fn input_generator(input: &str) -> HashMap<usize, usize> {
+pub fn parse(input: &str) -> HashMap<usize, usize> {
     let mut results = HashMap::new();
 
     for (index, game) in input
@@ -74,17 +74,17 @@ mod tests {
 
     #[test]
     fn part1_test() {
-        assert_eq!(part1(&input_generator(TEST)), 13);
+        assert_eq!(part1(&parse(TEST)), 13);
     }
 
     #[test]
     fn part2_test() {
-        assert_eq!(part2(&input_generator(TEST)), 30);
+        assert_eq!(part2(&parse(TEST)), 30);
     }
 
     #[test]
     fn mainline() {
-        let input = input_generator(&parser::load_input_string(4));
+        let input = parse(&parser::load_input_string(4));
         assert_eq!(part1(&input), 21558);
         assert_eq!(part2(&input), 10425665);
     }

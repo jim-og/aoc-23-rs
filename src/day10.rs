@@ -101,7 +101,7 @@ pub struct Map {
 }
 
 #[aoc_generator(day10)]
-pub fn input_generator(input: &str) -> Map {
+pub fn parse(input: &str) -> Map {
     let mut map = Map::default();
 
     for (row, line) in input.lines().enumerate() {
@@ -224,7 +224,7 @@ mod tests {
         ;"e4"
     )]
     fn both_test(input: &str, part_1: i32, part_2: usize) {
-        let input = input_generator(input);
+        let input = parse(input);
         let result = solve(&input);
         assert_eq!(result.0, part_1);
         assert_eq!(result.1, part_2);
@@ -232,7 +232,7 @@ mod tests {
 
     #[test]
     fn mainline() {
-        let input = input_generator(&parser::load_input_string(10));
+        let input = parse(&parser::load_input_string(10));
         let result = solve(&input);
         assert_eq!(result.0, 6927);
         assert_eq!(result.1, 467);

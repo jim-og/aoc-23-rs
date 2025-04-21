@@ -95,7 +95,7 @@ fn solve(
 }
 
 #[aoc_generator(day12)]
-pub fn input_generator(input: &str) -> Vec<String> {
+pub fn parse(input: &str) -> Vec<String> {
     parser::test_input(input)
 }
 
@@ -126,7 +126,7 @@ mod tests {
 
     #[test]
     fn both_test() {
-        let input = input_generator(
+        let input = parse(
             "???.### 1,1,3
             .??..??...?##. 1,1,3
             ?#?#?#?#?#?#?#? 1,3,1,6
@@ -140,7 +140,7 @@ mod tests {
 
     #[test]
     fn mainline() {
-        let input = input_generator(&parser::load_input_string(12));
+        let input = parse(&parser::load_input_string(12));
         assert_eq!(part1(&input), 7307);
         assert_eq!(part2(&input), 3415570893842);
     }

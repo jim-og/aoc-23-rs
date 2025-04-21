@@ -52,7 +52,7 @@ fn parse_input_part_2(index: usize, input: &[String]) -> u64 {
 }
 
 #[aoc_generator(day6)]
-pub fn input_generator(input: &str) -> Vec<String> {
+pub fn parse(input: &str) -> Vec<String> {
     parser::test_input(input)
 }
 
@@ -89,7 +89,7 @@ mod tests {
 
     #[test]
     fn both_test() {
-        let input = input_generator(
+        let input = parse(
             "Time:      7  15   30
             Distance:  9  40  200",
         );
@@ -99,7 +99,7 @@ mod tests {
 
     #[test]
     fn mainline() {
-        let input = input_generator(&parser::load_input_string(6));
+        let input = parse(&parser::load_input_string(6));
         assert_eq!(part1(&input), 781200);
         assert_eq!(part2(&input), 49240091);
     }

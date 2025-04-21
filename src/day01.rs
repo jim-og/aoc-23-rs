@@ -3,7 +3,7 @@ use std::collections::HashMap;
 use crate::parser;
 
 #[aoc_generator(day1)]
-pub fn input_generator(input: &str) -> Vec<String> {
+pub fn parse(input: &str) -> Vec<String> {
     parser::test_input(input)
 }
 

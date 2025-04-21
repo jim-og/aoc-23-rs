@@ -10,7 +10,7 @@ pub struct Game {
 }
 
 #[aoc_generator(day2)]
-pub fn input_generator(input: &str) -> Vec<Game> {
+pub fn parse(input: &str) -> Vec<Game> {
     let input = parser::test_input(input);
     let mut games = Vec::new();
 
@@ -78,18 +78,18 @@ mod tests {
 
     #[test]
     fn part1_test() {
-        assert_eq!(part1(&input_generator(TEST)), 8);
+        assert_eq!(part1(&parse(TEST)), 8);
     }
 
     #[test]
     fn part2_test() {
-        assert_eq!(part2(&input_generator(TEST)), 2286);
+        assert_eq!(part2(&parse(TEST)), 2286);
     }
 
     #[test]
     fn mainline() {
         let input = parser::load_input_string(2);
-        let games = input_generator(&input);
+        let games = parse(&input);
         assert_eq!(part1(&games), 2278);
         assert_eq!(part2(&games), 67953);
     }

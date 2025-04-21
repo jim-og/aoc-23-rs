@@ -120,7 +120,7 @@ impl Ord for Hand {
 }
 
 #[aoc_generator(day7)]
-pub fn input_generator(input: &str) -> Vec<String> {
+pub fn parse(input: &str) -> Vec<String> {
     parser::test_input(input)
 }
 
@@ -161,7 +161,7 @@ mod tests {
 
     #[test]
     fn both_test() {
-        let input = input_generator(
+        let input = parse(
             "32T3K 765
             T55J5 684
             KK677 28
@@ -174,7 +174,7 @@ mod tests {
 
     #[test]
     fn mainline() {
-        let input = input_generator(&parser::load_input_string(7));
+        let input = parse(&parser::load_input_string(7));
         assert_eq!(part1(&input), 247815719);
         assert_eq!(part2(&input), 248747492);
     }

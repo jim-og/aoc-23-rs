@@ -1,5 +1,5 @@
 #[aoc_generator(day9)]
-pub fn input_generator(input: &str) -> Vec<Vec<i32>> {
+pub fn parse(input: &str) -> Vec<Vec<i32>> {
     input
         .lines()
         .map(|line| {
@@ -44,7 +44,7 @@ mod tests {
 
     #[test]
     fn both_test() {
-        let input = input_generator(
+        let input = parse(
             "0 3 6 9 12 15
             1 3 6 10 15 21
             10 13 16 21 30 45",
@@ -55,7 +55,7 @@ mod tests {
 
     #[test]
     fn mainline() {
-        let input = input_generator(&parser::load_input_string(9));
+        let input = parse(&parser::load_input_string(9));
         assert_eq!(part1(&input), 1974232246);
         assert_eq!(part2(&input), 928);
     }
