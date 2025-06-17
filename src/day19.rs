@@ -242,7 +242,7 @@ fn part1(input: &Input) -> usize {
 }
 
 #[aoc(day19, part2)]
-fn part2(_input: &Input) -> String {
+fn part2(_input: &Input) -> usize {
     todo!()
 }
 
@@ -315,11 +315,6 @@ mod tests {
     #[test]
     fn part1_example() {
         assert_eq!(part1(&parse(TEST)), 19114);
-    }
-
-    #[test]
-    fn part2_example() {
-        assert_eq!(part2(&parse("<EXAMPLE>")), "<RESULT>");
     }
 
     #[test]
